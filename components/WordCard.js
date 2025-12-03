@@ -1,10 +1,34 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
-export default function WordCard({ item }) {
+export default function WordCard({ definition, word }) {
+  const saveItem = async (key, value) => {
+    try {
+      const jsonValue = await AsyncStorage.getItem("words");
+      const wordsArray = jsonValue != null ? JSON.parse(jsonValue) : [];
+      const wordObj = wordsArray.find((item) => item.word === key);
+
+      if (!wordObj) {
+        wordsArray.push({ word: key, definition: value });
+        await AsyncStorage.setItem("words", JSON.stringify(wordsArray));
+      }
+      console.log("Save successful");
+    } catch (error) {
+      console.log("Error saving item:", error);
+    }
+  };
+
   return (
     <View style={styles.card}>
-      <Text style={styles.definition}>{item}</Text>
+      <Text style={styles.definition}>{definition}</Text>
+      <Pressable
+        style={styles.refresh}
+        onPress={() => saveItem(word, definition)}
+      >
+        <FontAwesome6 name="add" size={24} color="black" />
+      </Pressable>
     </View>
   );
 }
@@ -13,8 +37,10 @@ const styles = StyleSheet.create({
   card: {
     borderWidth: 2,
     borderRadius: 10,
-    borderColor: "black",
-    backgroundColor: "lightblue",
+    borderColor: "#c8c8c8ff",
+    backgroundColor: "#e6fcffff",
+    elevation: 15,
+    shadowColor: "black",
   },
   definition: {
     fontSize: 20,

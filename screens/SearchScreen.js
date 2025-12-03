@@ -16,6 +16,8 @@ import WordOfTheDay from "../components/WordOfTheDay";
 import Logo from "../components/Logo";
 import WordScreen from "./WordScreen";
 import LinearGradient from "react-native-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 export default function SearchScreen({ navigation }) {
   //preload hooks
@@ -28,6 +30,39 @@ export default function SearchScreen({ navigation }) {
   const [wordSearched, setWordSearched] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    const clearAll = async () => {
+      try {
+        await AsyncStorage.clear();
+        console.log("All storage cleared!");
+      } catch (error) {
+        console.log("Error clearing storage:", error);
+      }
+    };
+    //clearAll()
+  });
+
+  useEffect(() => {
+    const backAction = () => {
+      if (submitted) {
+        setWordSearched("");
+        setInput("");
+        setSubmitted(false);
+        setIsFocused(false);
+      } else {
+        return false;
+      }
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [isFocused, submitted]);
 
   if (!fontsLoaded) {
     return null; // Prevent rendering until fonts are ready
@@ -72,13 +107,15 @@ export default function SearchScreen({ navigation }) {
         {submitted ? (
           <View style={styles.wordList}>
             <LinearGradient
-              colors={["#33ccffff", "#ffffff21"]}
-              style={[styles.fade, {top: 0}]}
+              // colors={["#33ccffff", "#ffffff21"]}
+              colors={["#ffffffff", "#ffffff21"]}
+              style={[styles.fade, { top: 0 }]}
             ></LinearGradient>
             <WordScreen word={wordSearched} />
             <LinearGradient
-              colors={["#ffffff21", "#ff99ccff"]}
-              style={[styles.fade, {bottom: 0}]}
+              //colors={["#ffffff21", "#ff99ccff"]}
+              colors={["#ffffff21", "#ffffffff"]}
+              style={[styles.fade, { bottom: 0 }]}
             ></LinearGradient>
           </View>
         ) : (
@@ -101,7 +138,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    
   },
   inputView: {
     position: "relative",

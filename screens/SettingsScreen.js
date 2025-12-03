@@ -1,12 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import React from 'react'
 
-export default function SearchResults() {
+export default function SettingsScreen() {
   return (
     <View>
-        
-      <Text>SearchResults</Text>
+      <Text>SettingsScreen</Text>
     </View>
   )
 }

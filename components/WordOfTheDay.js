@@ -10,7 +10,11 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 
-export default function WordOfTheDay({ isFocused, setWordSearched, handleSubmit }) {
+export default function WordOfTheDay({
+  isFocused,
+  setWordSearched,
+  handleSubmit,
+}) {
   const [word, setWord] = useState("");
   useEffect(() => {
     getWord();
@@ -35,10 +39,7 @@ export default function WordOfTheDay({ isFocused, setWordSearched, handleSubmit 
 
   return (
     <View style={[{ display: isFocused ? "none" : "flex" }, styles.wordView]}>
-      <Pressable
-        style={styles.wordBox}
-        onPress={() => handleSubmit(word)}
-      >
+      <Pressable style={styles.wordBox} onPress={() => handleSubmit(word)}>
         <Text style={styles.title}>Word of the Day</Text>
         <Text style={styles.word}>{word}</Text>
         <Pressable style={styles.refresh} onPress={() => getWord()}>
@@ -53,13 +54,16 @@ const styles = StyleSheet.create({
   wordView: {
     flex: 6,
     width: "100%",
-
-        padding: 20,
+    padding: 20,
   },
   wordBox: {
     flex: 1,
     backgroundColor: "#95c6ffff",
+    borderWidth: 2,
+    borderColor: "blue",
     borderRadius: 30,
+    shadowColor: "blue",
+    elevation: 5,
   },
   title: {
     fontSize: 30,

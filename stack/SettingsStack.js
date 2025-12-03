@@ -2,19 +2,17 @@ import { StyleSheet, Text, View, StatusBar } from "react-native";
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import SearchScreen from "../screens/SearchScreen";
-import WordScreen from "../screens/WordScreen";
+import SettingsScreen from "../screens/SettingsScreen";
 
 const Stack = createNativeStackNavigator();
 
-export default function SearchStack() {
+export default function SettingsStack() {
   return (
     <Stack.Navigator
-      initialRouteName="Search Screen"
+      initialRouteName="Settings Screen"
       screenOptions={{ headerShown: false }}
     >
-      <Stack.Screen name="Search Screen" component={SearchScreen} />
-      <Stack.Screen name="Word Screen" component={WordScreen} />
+      <Stack.Screen name="Settings Screen" component={SettingsScreen} />
     </Stack.Navigator>
   );
 }

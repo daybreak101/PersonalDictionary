@@ -6,7 +6,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MyWordsStack from "./stack/MyWordsStack";
 import SearchStack from "./stack/SearchStack";
+import SettingsStack from "./stack/SettingsStack";
 import Foundation from "@expo/vector-icons/Foundation";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const Tab = createBottomTabNavigator();
 export default function App() {
@@ -45,6 +47,15 @@ export default function App() {
               options={{
                 tabBarIcon: ({ color }) => (
                   <Foundation name="book-bookmark" size={24} color={color} />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="Settings"
+              component={SettingsStack}
+              options={{
+                tabBarIcon: ({ color }) => (
+                  <MaterialIcons name="settings" size={24} color={color} />
                 ),
               }}
             />

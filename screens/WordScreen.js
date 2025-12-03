@@ -14,13 +14,6 @@ export default function WordScreen({ word }) {
         setDefinitions([]);
       }
       try {
-        //fetching data from two apis because no good dictionary apis exist
-        // const res = await axios.get(
-        //   `https://api.api-ninjas.com/v1/dictionary?word=${word}`,
-        //   {
-        //     headers: { "X-Api-Key": Constants.expoConfig.extra.API_NINJAS_KEY },
-        //   }
-        // );
         const res2 = await axios.get(
           `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
         );
@@ -33,10 +26,6 @@ export default function WordScreen({ word }) {
 
         //check if first api returned any data
         setDefinitions((prev) => {
-          // const ninjasDef = res.data?.definition
-          //   ? [String(res.data.definition)]
-          //   : [];
-          //return [...ninjasDef, ...apiDef];
           return [...apiDef];
         });
 
@@ -55,17 +44,21 @@ export default function WordScreen({ word }) {
         style={styles.wordList}
         data={definitions}
         renderItem={({ item }) => {
-          return <WordCard item={item} />;
+          return <WordCard word={word} definition={item} />;
         }}
         ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
         ListEmptyComponent={
           <View
-            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+            style={{ flexGrow: 1, alignItems: "center", justifyContent: "center" }}
           >
             <Text>No items found</Text>
           </View>
         }
-        contentContainerStyle={{paddingVertical: 40, paddingHorizontal: 20}}
+        contentContainerStyle={{
+          paddingVertical: 40,
+          paddingHorizontal: 20,
+          // backgroundColor: "#ffffffff",
+        }}
       />
     </View>
   );
@@ -74,7 +67,7 @@ export default function WordScreen({ word }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%"
+    width: "100%",
   },
   wordList: {
     flex: 1,
