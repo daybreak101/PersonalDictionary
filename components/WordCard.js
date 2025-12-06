@@ -2,8 +2,11 @@ import { StyleSheet, Text, View, Pressable } from "react-native";
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { useNotif } from "../context/NotifContext";
 
 export default function WordCard({ definition, word }) {
+  const { setNotifVisible, setNotifDesc } = useNotif();
+
   const saveItem = async (key, value) => {
     try {
       const jsonValue = await AsyncStorage.getItem("words");
@@ -13,12 +16,16 @@ export default function WordCard({ definition, word }) {
       if (!wordObj) {
         wordsArray.push({ word: key, definition: value });
         await AsyncStorage.setItem("words", JSON.stringify(wordsArray));
+        setNotifVisible(true)
+        setNotifDesc(key + " has been added to your dictionary")
       }
       console.log("Save successful");
     } catch (error) {
       console.log("Error saving item:", error);
     }
   };
+
+  
 
   return (
     <View style={styles.card}>

@@ -9,7 +9,7 @@ import {
   Keyboard,
   BackHandler,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import { useFonts, MonteCarlo_400Regular } from "@expo-google-fonts/montecarlo";
 import Foundation from "@expo/vector-icons/Foundation";
 import WordOfTheDay from "../components/WordOfTheDay";
@@ -17,7 +17,9 @@ import Logo from "../components/Logo";
 import WordScreen from "./WordScreen";
 import LinearGradient from "react-native-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import Ionicons from "@expo/vector-icons/Ionicons";
+import Notification from "../components/Notification";
+import { NotifProvider, useNotif } from "../context/NotifContext";
 
 export default function SearchScreen({ navigation }) {
   //preload hooks
@@ -30,24 +32,13 @@ export default function SearchScreen({ navigation }) {
   const [wordSearched, setWordSearched] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-
-  useEffect(() => {
-    const clearAll = async () => {
-      try {
-        await AsyncStorage.clear();
-        console.log("All storage cleared!");
-      } catch (error) {
-        console.log("Error clearing storage:", error);
-      }
-    };
-    //clearAll()
-  });
+  const { notifVisible } = useNotif()
 
   useEffect(() => {
     const backAction = () => {
-      if (submitted) {
-        setWordSearched("");
-        setInput("");
+      if (submitted || isFocused) {
+        // setWordSearched("");
+        // setInput("");
         setSubmitted(false);
         setIsFocused(false);
       } else {
@@ -81,53 +72,67 @@ export default function SearchScreen({ navigation }) {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.page} behavior="padding">
-      <View style={styles.container}>
-        {isFocused || submitted ? <></> : <Logo />}
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.textInput}
-            autoCorrect={false}
-            autoCapitalize="none"
-            placeholder="Search for a word"
-            placeholderTextColor="gray"
-            value={input}
-            onChangeText={setInput}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            onSubmitEditing={(e) => handleSubmit(e.nativeEvent.text)}
-          />
-          <Pressable
-            style={styles.searchIconContainer}
-            onPress={() => handleSubmit(input)}
-          >
-            <Foundation name="magnifying-glass" size={30} color="black" />
-          </Pressable>
-        </View>
-        {submitted ? (
-          <View style={styles.wordList}>
-            <LinearGradient
-              // colors={["#33ccffff", "#ffffff21"]}
-              colors={["#ffffffff", "#ffffff21"]}
-              style={[styles.fade, { top: 0 }]}
-            ></LinearGradient>
-            <WordScreen word={wordSearched} />
-            <LinearGradient
-              //colors={["#ffffff21", "#ff99ccff"]}
-              colors={["#ffffff21", "#ffffffff"]}
-              style={[styles.fade, { bottom: 0 }]}
-            ></LinearGradient>
+      <KeyboardAvoidingView style={styles.page} behavior="padding">
+        <View style={styles.container}>
+          {isFocused || submitted ? <></> : <Logo />}
+          <View style={styles.inputView}>
+            {isFocused ? (
+              <Pressable
+                onPress={() => {
+                  setIsFocused(false);
+                  Keyboard.dismiss();
+                }}
+                style={styles.inputPressable}
+              >
+                <Ionicons name="chevron-back" size={24} color="black" />
+              </Pressable>
+            ) : (
+              <></>
+            )}
+            <TextInput
+              style={styles.textInput}
+              autoCorrect={false}
+              autoCapitalize="none"
+              placeholder="Search for a word"
+              placeholderTextColor="gray"
+              value={input}
+              onChangeText={setInput}
+              onFocus={() => setIsFocused(true)}
+              // onBlur={() => setIsFocused(false)}
+              onSubmitEditing={(e) => handleSubmit(e.nativeEvent.text)}
+            />
+            <Pressable
+              style={styles.searchIconContainer}
+              onPress={() => handleSubmit(input)}
+            >
+              <Foundation name="magnifying-glass" size={30} color="black" />
+            </Pressable>
           </View>
-        ) : (
-          <WordOfTheDay
-            isFocused={isFocused}
-            navigation={navigation}
-            setWordSearched={setWordSearched}
-            handleSubmit={handleSubmit}
-          />
-        )}
-      </View>
-    </KeyboardAvoidingView>
+          {submitted ? (
+            <View style={styles.wordList}>
+              <LinearGradient
+                // colors={["#33ccffff", "#ffffff21"]}
+                colors={["#ffffffff", "#ffffff21"]}
+                style={[styles.fade, { top: 0 }]}
+              ></LinearGradient>
+              <WordScreen word={wordSearched} />
+              <LinearGradient
+                //colors={["#ffffff21", "#ff99ccff"]}
+                colors={["#ffffff21", "#ffffffff"]}
+                style={[styles.fade, { bottom: 0 }]}
+              ></LinearGradient>
+            </View>
+          ) : (
+            <WordOfTheDay
+              isFocused={isFocused}
+              navigation={navigation}
+              setWordSearched={setWordSearched}
+              handleSubmit={handleSubmit}
+            />
+          )}
+        </View>
+        {notifVisible && <Notification />}
+      </KeyboardAvoidingView>
   );
 }
 
@@ -143,11 +148,16 @@ const styles = StyleSheet.create({
     position: "relative",
     width: "100%",
     padding: 20,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  inputPressable: {
+    width: 40,
   },
   textInput: {
+    flex: 1,
     borderWidth: 2,
     borderColor: "black",
-    width: "100%",
     color: "black",
     borderRadius: 10,
     height: 50,

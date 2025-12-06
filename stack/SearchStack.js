@@ -9,13 +9,13 @@ const Stack = createNativeStackNavigator();
 
 export default function SearchStack() {
   return (
-    <Stack.Navigator
-      initialRouteName="Search Screen"
-      screenOptions={{ headerShown: false }}
-    >
-      <Stack.Screen name="Search Screen" component={SearchScreen} />
-      <Stack.Screen name="Word Screen" component={WordScreen} />
-    </Stack.Navigator>
+      <Stack.Navigator
+        initialRouteName="Search Screen"
+        screenOptions={{ headerShown: false }}
+      >
+        <Stack.Screen name="Search Screen" component={SearchScreen} />
+        <Stack.Screen name="Word Screen" component={WordScreen} />
+      </Stack.Navigator>
   );
 }
 
