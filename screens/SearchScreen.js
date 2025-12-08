@@ -80,6 +80,7 @@ export default function SearchScreen({ navigation }) {
               <Pressable
                 onPress={() => {
                   setIsFocused(false);
+                  setSubmitted(false)
                   Keyboard.dismiss();
                 }}
                 style={styles.inputPressable}

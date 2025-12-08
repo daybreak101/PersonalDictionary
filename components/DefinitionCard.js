@@ -1,12 +1,17 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Entypo from "@expo/vector-icons/Entypo";
 import YesNoModal from "../components/YesNoModal";
 
-export default function DefinitionCard({ definition, word, deleteItem }) {
+export default function DefinitionCard({ info, word, deleteItem }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDesc, setModalDesc] = useState("");
+
+  useEffect(() => {
+    console.log(info)
+  }, [])
+
   return (
     <View style={styles.card}>
       <YesNoModal
@@ -16,7 +21,10 @@ export default function DefinitionCard({ definition, word, deleteItem }) {
         func={() => deleteItem(word)}
       />
       <Text style={styles.word}>{word}</Text>
-      <Text style={styles.definition}>{definition}</Text>
+      <Text>{info.partOfSpeech}</Text>
+      <Text style={styles.definition}>{info.definition}</Text>
+      {info.synonyms.length > 0 && <Text>Synonyms: {info.synonyms.join(", ")}</Text>}
+      {info.antonyms.length > 0 && <Text>Antonyms: {info.antonyms.join(", ")}</Text>} 
       <Pressable
         style={styles.refresh}
         onPress={() => {
