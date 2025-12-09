@@ -19,7 +19,7 @@ export default function WordCard({ definition, word }) {
       const wordObj = wordsArray.find((item) => item.word === key);
 
       if (!wordObj) {
-        wordsArray.push({ word: key[0], info: value, timestamp: Date.now() });
+        wordsArray.unshift({ word: key, info: value, timestamp: Date.now() });
         await AsyncStorage.setItem("words", JSON.stringify(wordsArray));
         setNotifVisible(true);
         setNotifDesc(key + " has been added to your dictionary");
