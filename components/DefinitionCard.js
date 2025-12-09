@@ -4,12 +4,12 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Entypo from "@expo/vector-icons/Entypo";
 import YesNoModal from "../components/YesNoModal";
 
-export default function DefinitionCard({ info, word, deleteItem }) {
+export default function DefinitionCard({ item, deleteItem }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDesc, setModalDesc] = useState("");
 
   useEffect(() => {
-    console.log(info)
+    // console.log(info)
   }, [])
 
   return (
@@ -18,19 +18,19 @@ export default function DefinitionCard({ info, word, deleteItem }) {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         desc={modalDesc}
-        func={() => deleteItem(word)}
+        func={() => deleteItem(item.word)}
       />
-      <Text style={styles.word}>{word}</Text>
-      <Text>{info.partOfSpeech}</Text>
-      <Text style={styles.definition}>{info.definition}</Text>
-      {info.synonyms.length > 0 && <Text>Synonyms: {info.synonyms.join(", ")}</Text>}
-      {info.antonyms.length > 0 && <Text>Antonyms: {info.antonyms.join(", ")}</Text>} 
+      <Text style={styles.word}>{item.word}</Text>
+      <Text>{item.info.partOfSpeech}</Text>
+      <Text style={styles.definition}>{item.info.definition}</Text>
+      {item.info.synonyms.length > 0 && <Text>Synonyms: {item.info.synonyms.join(", ")}</Text>}
+      {item.info.antonyms.length > 0 && <Text>Antonyms: {item.info.antonyms.join(", ")}</Text>} 
       <Pressable
         style={styles.refresh}
         onPress={() => {
           setModalVisible(true);
           setModalDesc(
-            `Are you sure you want to delete ${word} from your dictionary?`
+            `Are you sure you want to delete ${item.word} from your dictionary?`
           );
         }}
       >

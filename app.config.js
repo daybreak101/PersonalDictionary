@@ -8,8 +8,6 @@ export default {
     android: {
       package: "com.anonymous.PersonalDictionary",
     },
-    extra: {
-      API_NINJAS_KEY: process.env.API_NINJAS_KEY,
-    },
+    plugins: ["expo-sqlite", "expo-asset"],
   },
 };

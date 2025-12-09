@@ -9,6 +9,7 @@ import Animated, {
   useAnimatedStyle,
   Easing,
 } from "react-native-reanimated";
+import data from "../data/randomWord.json"
 
 export default function WordOfTheDay({
   isFocused,
@@ -22,15 +23,7 @@ export default function WordOfTheDay({
 
   const getWord = async () => {
     try {
-      const res = await axios.get("https://api.api-ninjas.com/v1/randomword", {
-        headers: { "X-Api-Key": Constants.expoConfig.extra.API_NINJAS_KEY },
-      });
-      const character = res.data.word[0];
-      if (character == character.toUpperCase()) {
-        getWord();
-      } else {
-        setWord(res.data.word);
-      }
+      setWord(data[Math.floor(Math.random() * data.length)])
     } catch (error) {
       setWord("Cannot fetch word");
       console.log(error);
