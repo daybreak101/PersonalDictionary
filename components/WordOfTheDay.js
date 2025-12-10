@@ -51,12 +51,12 @@ const styles = StyleSheet.create({
   },
   wordBox: {
     flex: 1,
-    backgroundColor: "#95c6ffff",
+    backgroundColor: "#e6fcff",
     borderWidth: 2,
-    borderColor: "blue",
+    borderColor: "#c8c8c8ff",
     borderRadius: 30,
     shadowColor: "blue",
-    elevation: 5,
+    elevation: 100,
   },
   title: {
     fontSize: 30,

@@ -60,6 +60,7 @@ export default function MyWordsList() {
       <FlatList
         style={styles.wordList}
         data={savedWords}
+        keyExtractor={(item) => item.timestamp.toString()}
         renderItem={({ item }) => {
           return <DefinitionCard item={item} deleteItem={deleteItem} />;
         }}
