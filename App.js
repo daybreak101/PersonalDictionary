@@ -10,65 +10,72 @@ import SettingsStack from "./stack/SettingsStack";
 import Foundation from "@expo/vector-icons/Foundation";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { NotifProvider } from "./context/NotifContext";
+import CustomTab from "./components/CustomTab";
+import { ThemeProvider, useTheme } from "./context/ThemeContext";
+
+function TabNavigator() {
+  return (
+    <Tab.Navigator
+      tabBar={(props) => <CustomTab {...props} />}
+      screenOptions={{
+        animation: "shift",
+        headerShown: false,
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: 300,
+        },
+      }}
+    >
+      <Tab.Screen
+        name="Search"
+        component={SearchStack}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Foundation name="magnifying-glass" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="My Words"
+        component={MyWordsStack}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Foundation name="book-bookmark" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsStack}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="settings" size={24} color={color} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+}
 
 const Tab = createBottomTabNavigator();
 export default function App() {
   return (
-    <NotifProvider>
-      <SafeAreaProvider>
-        <SafeAreaView style={{ flex: 1 }}>
-          <StatusBar
-            style="light"
-            translucent={false}
-            backgroundColor="black"
-            hidden={false}
-          />
-          <NavigationContainer>
-            <Tab.Navigator
-              screenOptions={{
-                animation: "shift",
-                headerShown: false,
-                tabBarLabelStyle: {
-                  fontSize: 12,
-                  fontWeight: 300,
-                },
-              }}
-            >
-              <Tab.Screen
-                name="Search"
-                component={SearchStack}
-                options={{
-                  tabBarIcon: ({ color }) => (
-                    <Foundation
-                      name="magnifying-glass"
-                      size={24}
-                      color={color}
-                    />
-                  ),
-                }}
-              />
-              <Tab.Screen
-                name="My Words"
-                component={MyWordsStack}
-                options={{
-                  tabBarIcon: ({ color }) => (
-                    <Foundation name="book-bookmark" size={24} color={color} />
-                  ),
-                }}
-              />
-              <Tab.Screen
-                name="Settings"
-                component={SettingsStack}
-                options={{
-                  tabBarIcon: ({ color }) => (
-                    <MaterialIcons name="settings" size={24} color={color} />
-                  ),
-                }}
-              />
-            </Tab.Navigator>
-          </NavigationContainer>
-        </SafeAreaView>
-      </SafeAreaProvider>
-    </NotifProvider>
+    <ThemeProvider>
+      <NotifProvider>
+        <SafeAreaProvider>
+          <SafeAreaView style={{ flex: 1 }}>
+            <StatusBar
+              style="light"
+              translucent={false}
+              backgroundColor="black"
+              hidden={false}
+            />
+            <NavigationContainer>
+              <TabNavigator/>
+            </NavigationContainer>
+          </SafeAreaView>
+        </SafeAreaProvider>
+      </NotifProvider>
+    </ThemeProvider>
   );
 }

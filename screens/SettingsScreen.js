@@ -10,11 +10,13 @@ import {
 import React, { useState } from "react";
 import YesNoModal from "../components/YesNoModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import ThemeSelector from "../components/settings/ThemeSelector";
+import DarkModeToggle from "../components/settings/DarkModeToggle";
 
 export default function SettingsScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDesc, setModalDesc] = useState("");
-  const [selectedFunc, setSelectedFunc] = useState(() => {})
+  const [selectedFunc, setSelectedFunc] = useState(() => {});
 
   const clearRecentSearches = async () => {
     try {
@@ -32,7 +34,6 @@ export default function SettingsScreen() {
     }
   };
 
-
   return (
     <View style={styles.container}>
       <YesNoModal
@@ -42,15 +43,20 @@ export default function SettingsScreen() {
         func={selectedFunc}
       />
       <Text style={styles.header}>Settings</Text>
+      <ThemeSelector />
+      <DarkModeToggle />
       <Pressable style={styles.pressable}>
-        <Text style={styles.text}>Dark Mode</Text>
+        <Text style={styles.text}>Haptic Feedback</Text>
+      </Pressable>
+      <Pressable style={styles.pressable}>
+        <Text style={styles.text}>Screen Reader</Text>
       </Pressable>
       <Pressable
         style={styles.pressable}
         onPress={() => {
           setModalDesc("clear recent searches");
           setModalVisible(true);
-          setSelectedFunc(() => clearRecentSearches)
+          setSelectedFunc(() => clearRecentSearches);
         }}
       >
         <Text style={styles.text}>Clear Recent Searches</Text>
@@ -60,7 +66,7 @@ export default function SettingsScreen() {
         onPress={() => {
           setModalDesc("clear saved words");
           setModalVisible(true);
-          setSelectedFunc(() => clearSavedWords)
+          setSelectedFunc(() => clearSavedWords);
         }}
       >
         <Text style={styles.text}>Clear Saved Words</Text>
@@ -72,13 +78,20 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 20
   },
   header: {
     fontSize: 30,
   },
   pressable: {
     width: "100%",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: "lightgray",
   },
+
   text: {
     fontSize: 24,
   },

@@ -89,7 +89,7 @@ export default function MyWordsList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
+    width: "100%" 
   },
   wordList: {
     flex: 1,

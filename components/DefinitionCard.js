@@ -16,10 +16,22 @@ import Animated, {
 import LinearGradient from "react-native-linear-gradient";
 import { RadialGradient } from "react-native-gradients";
 import RNHapticFeedback from "react-native-haptic-feedback";
+import { ThemeProvider, useTheme } from "../context/ThemeContext";
 
 export default function DefinitionCard({ item, deleteItem }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDesc, setModalDesc] = useState("");
+
+  const {
+    gradientColor1,
+    gradientColor2,
+    focusColor,
+    unfocusColor,
+    textColor,
+    backgroundColor,
+    fadeColor1,
+    fadeColor2,
+  } = useTheme();
 
   const options = {
     enableVibrateFallback: true,
@@ -53,7 +65,6 @@ export default function DefinitionCard({ item, deleteItem }) {
     };
   });
 
-
   //rotate arrow animation
   const animatedRotateStyle = useAnimatedStyle(() => {
     return {
@@ -66,8 +77,8 @@ export default function DefinitionCard({ item, deleteItem }) {
     return {
       backgroundColor: interpolateColor(
         expanded.value,
-        [0, 0.5, 1],
-        ["#ab9fffff", "#e0c6ff", "#e6fcff"]
+        [0, 1],
+        [unfocusColor, focusColor]
       ),
     };
   });
@@ -76,7 +87,7 @@ export default function DefinitionCard({ item, deleteItem }) {
     // my neat little trick to do an animated linear gradient
     <Animated.View style={[styles.card, animatedColorStyle, { opacity: 0.9 }]}>
       <LinearGradient
-        colors={["#ffffff46", "#00eaffa9"]}
+        colors={[gradientColor1, gradientColor2]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
@@ -89,11 +100,11 @@ export default function DefinitionCard({ item, deleteItem }) {
 
         <Pressable style={styles.wordContainer} onPress={() => toggleExpand()}>
           <LinearGradient
-            colors={["#ffffff92", "#ffffff01"]}
+            colors={[fadeColor1, fadeColor2]}
             start={{ x: 0, y: 1 }}
             end={{ x: 0.75, y: 0 }}
             locations={[0.1, 1]}
-            style={{ borderRadius: 25 }}
+            style={{ borderRadius: 25, width: "90%"}}
           >
             <Text style={styles.word}>{item.word}</Text>
           </LinearGradient>
@@ -102,7 +113,7 @@ export default function DefinitionCard({ item, deleteItem }) {
           </Animated.View>
         </Pressable>
 
-        <Animated.View style={[animatedExpansionStyle, {overflow: "hidden"}]}>
+        <Animated.View style={[animatedExpansionStyle, { overflow: "hidden" }]}>
           {/* the below view wrapper measures the container height for animated expansion */}
           {/* onLayout returns an event that contains: width, height, x-position, y-position */}
           {/* apparently styling MUST have these properties or else it might misbehave */}
