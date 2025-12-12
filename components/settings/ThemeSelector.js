@@ -114,6 +114,12 @@ export default function ThemeSelector() {
           </Pressable>
           <Pressable
             style={styles.option}
+            onPress={() => toggleTheme("Iridescent")}
+          >
+            <Text>Iridescent</Text>
+          </Pressable>
+          <Pressable
+            style={styles.option}
             onPress={() => toggleTheme("Soft Pearl")}
           >
             <Text>Soft Pearl</Text>
@@ -121,10 +127,7 @@ export default function ThemeSelector() {
           <Pressable style={styles.option} onPress={() => toggleTheme("Prism")}>
             <Text>Prism</Text>
           </Pressable>
-          <Pressable
-            style={styles.option}
-            onPress={() => toggleTheme("Comet")}
-          >
+          <Pressable style={styles.option} onPress={() => toggleTheme("Comet")}>
             <Text>Comet</Text>
           </Pressable>
           <Pressable

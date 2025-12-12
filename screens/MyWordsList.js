@@ -13,11 +13,24 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import DefinitionCard from "../components/DefinitionCard";
 import { useFocusEffect } from "@react-navigation/native";
 import MyWordsSearch from "../components/MyWordsSearch";
+import { useTheme } from "../context/ThemeContext";
 
 export default function MyWordsList() {
   const [savedWords, setSavedWords] = useState([]);
   const [fullSavedWords, setFullSavedWords] = useState([]);
   const [refreshFlag, setRefreshFlag] = useState(false);
+
+    const {
+        gradientColor1,
+        gradientColor2,
+        focusColor,
+        unfocusColor,
+        textColor,
+        backgroundColor,
+        fadeColor1,
+        fadeColor2,
+        darkMode
+      } = useTheme(); 
 
   const getAllItems = async () => {
     try {
@@ -52,7 +65,7 @@ export default function MyWordsList() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: backgroundColor}]}>
       <MyWordsSearch
         fullSavedWords={fullSavedWords}
         setSavedWords={setSavedWords}

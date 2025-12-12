@@ -2,10 +2,23 @@ import { StyleSheet, View, Pressable, TextInput, Keyboard } from "react-native";
 import React, { useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Foundation from "@expo/vector-icons/Foundation";
+import { useTheme } from "../context/ThemeContext";
 
 export default function MyWordsSearch({ fullSavedWords, setSavedWords }) {
   const [input, setInput] = useState("");
   const [submitted, setSubmitted] = useState(false);
+
+  const {
+    gradientColor1,
+    gradientColor2,
+    focusColor,
+    unfocusColor,
+    textColor,
+    backgroundColor,
+    fadeColor1,
+    fadeColor2,
+    darkMode,
+  } = useTheme();
 
   const handleSubmit = (word) => {
     if (word === "") {
@@ -42,13 +55,13 @@ export default function MyWordsSearch({ fullSavedWords, setSavedWords }) {
           }}
           style={styles.inputPressable}
         >
-          <Ionicons name="chevron-back" size={24} color="black" />
+          <Ionicons name="chevron-back" size={24} color={darkMode ? focusColor : unfocusColor} />
         </Pressable>
       ) : (
         <></>
       )}
       <TextInput
-        style={styles.textInput}
+        style={[styles.textInput, {borderColor:  darkMode ? focusColor : unfocusColor, color: textColor}]}
         autoCorrect={false}
         autoCapitalize="none"
         placeholder="Search for a word"
@@ -61,7 +74,7 @@ export default function MyWordsSearch({ fullSavedWords, setSavedWords }) {
         style={styles.searchIconContainer}
         onPress={() => handleSubmit(input)}
       >
-        <Foundation name="magnifying-glass" size={30} color="black" />
+        <Foundation name="magnifying-glass" size={30} color={darkMode ? focusColor : unfocusColor} />
       </Pressable>
     </View>
   );

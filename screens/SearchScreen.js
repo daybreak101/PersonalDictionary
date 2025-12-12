@@ -20,12 +20,25 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Notification from "../components/Notification";
 import { NotifProvider, useNotif } from "../context/NotifContext";
+import { useTheme } from "../context/ThemeContext";
 
 export default function SearchScreen({ navigation }) {
   //preload hooks
   let [fontsLoaded] = useFonts({
     MonteCarlo_400Regular,
   });
+
+   const {
+      gradientColor1,
+      gradientColor2,
+      focusColor,
+      unfocusColor,
+      textColor,
+      backgroundColor,
+      fadeColor1,
+      fadeColor2,
+      darkMode
+    } = useTheme();
 
   //states
   const [input, setInput] = useState("");
@@ -73,7 +86,7 @@ export default function SearchScreen({ navigation }) {
 
   return (
       <KeyboardAvoidingView style={styles.page} behavior="padding">
-        <View style={styles.container}>
+        <View style={[styles.container, {backgroundColor: backgroundColor}]}>
           {isFocused || submitted ? <></> : <Logo />}
           <View style={styles.inputView}>
             {isFocused ? (
@@ -85,17 +98,17 @@ export default function SearchScreen({ navigation }) {
                 }}
                 style={styles.inputPressable}
               >
-                <Ionicons name="chevron-back" size={24} color="black" />
+                <Ionicons name="chevron-back" size={24} color={darkMode ? focusColor : unfocusColor} />
               </Pressable>
             ) : (
               <></>
             )}
             <TextInput
-              style={styles.textInput}
+              style={[styles.textInput, {borderColor: darkMode ? focusColor : unfocusColor, color: textColor}]}
               autoCorrect={false}
               autoCapitalize="none"
               placeholder="Search for a word"
-              placeholderTextColor="gray"
+              placeholderTextColor={textColor}
               value={input}
               onChangeText={setInput}
               onFocus={() => setIsFocused(true)}
@@ -106,22 +119,12 @@ export default function SearchScreen({ navigation }) {
               style={styles.searchIconContainer}
               onPress={() => handleSubmit(input)}
             >
-              <Foundation name="magnifying-glass" size={30} color="black" />
+              <Foundation name="magnifying-glass" size={30} color={darkMode ? focusColor : unfocusColor} />
             </Pressable>
           </View>
           {submitted ? (
             <View style={styles.wordList}>
-              <LinearGradient
-                // colors={["#33ccffff", "#ffffff21"]}
-                colors={["#ffffffff", "#ffffff21"]}
-                style={[styles.fade, { top: 0 }]}
-              ></LinearGradient>
               <WordScreen word={wordSearched} />
-              <LinearGradient
-                //colors={["#ffffff21", "#ff99ccff"]}
-                colors={["#ffffff21", "#ffffffff"]}
-                style={[styles.fade, { bottom: 0 }]}
-              ></LinearGradient>
             </View>
           ) : (
             <WordOfTheDay

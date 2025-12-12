@@ -104,7 +104,7 @@ export default function DefinitionCard({ item, deleteItem }) {
             start={{ x: 0, y: 1 }}
             end={{ x: 0.75, y: 0 }}
             locations={[0.1, 1]}
-            style={{ borderRadius: 25, width: "90%"}}
+            style={{ borderRadius: 25, width: "90%" }}
           >
             <Text style={styles.word}>{item.word}</Text>
           </LinearGradient>

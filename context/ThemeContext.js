@@ -9,21 +9,30 @@ export const useTheme = () => {
 };
 
 const ThemeProvider = ({ children }) => {
-  const [gradientColor1, setGradientColor1] = useState("#ffffff46");
-  const [gradientColor2, setGradientColor2] = useState("#00eaff");
-  const [unfocusColor, setUnfocusColor] = useState("#ab9fffff");
-  const [focusColor, setFocusColor] = useState("#e6fcff");
-  const [fadeColor1, setFadeColor1] = useState("#ffffff92");
+  const [gradientColor1, setGradientColor1] = useState("#ffffffba");
+  const [gradientColor2, setGradientColor2] = useState("#ffffffa9");
+  const [unfocusColor, setUnfocusColor] = useState("#000000ff");
+  const [focusColor, setFocusColor] = useState("#ffffffff");
+  const [fadeColor1, setFadeColor1] = useState("#ffffffff");
   const [fadeColor2, setFadeColor2] = useState("#ffffff01");
   const [themeValue, setThemeValue] = useState("Default");
+  const [darkMode, setDarkMode] = useState(false);
 
   const [textColor, setTextColor] = useState("black");
   const [backgroundColor, setBackgroundColor] = useState("white");
-  const [moduleColor, setModuleColor] = useState("lightgray")
+  const [moduleColor, setModuleColor] = useState("lightgray");
 
   const setTheme = (value) => {
     switch (value) {
       case "Default":
+        setGradientColor1("#ffffffba");
+        setGradientColor2("#ffffffa9");
+        setUnfocusColor("#000000ff");
+        setFocusColor("#ffffffff");
+        setFadeColor1("#ffffffff");
+        setFadeColor2("#ffffff01");
+        break;
+      case "Iridescent":
         setGradientColor1("#ffffff46");
         setGradientColor2("#00eaffa9");
         setUnfocusColor("#ab9fffff");
@@ -66,6 +75,13 @@ const ThemeProvider = ({ children }) => {
     }
   };
 
+  const toggleDarkMode = () => {
+    //better to update darkMode after since state change isn't immediate
+    setBackgroundColor(darkMode ? "white" : "#262626ff");
+    setTextColor(darkMode ? "black" : "white");
+    setDarkMode((prev) => !prev);
+  };
+
   const value = useMemo(
     () => ({
       gradientColor1,
@@ -79,7 +95,9 @@ const ThemeProvider = ({ children }) => {
       setTheme,
       themeValue,
       setThemeValue,
-      moduleColor
+      moduleColor,
+      darkMode,
+      toggleDarkMode,
     }),
     [
       gradientColor1,
@@ -91,7 +109,8 @@ const ThemeProvider = ({ children }) => {
       fadeColor1,
       fadeColor2,
       themeValue,
-      moduleColor
+      moduleColor,
+      darkMode,
     ]
   );
 

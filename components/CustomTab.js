@@ -2,8 +2,14 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import RNHapticFeedback from "react-native-haptic-feedback";
 import { useTheme } from "../context/ThemeContext";
+import LinearGradient from "react-native-linear-gradient";
 
-export default function CustomTab({ state, descriptors, navigation , themeValue}) {
+export default function CustomTab({
+  state,
+  descriptors,
+  navigation,
+  themeValue,
+}) {
   const {
     gradientColor1,
     gradientColor2,
@@ -16,7 +22,13 @@ export default function CustomTab({ state, descriptors, navigation , themeValue}
     moduleColor,
   } = useTheme();
   return (
-    <View style={[styles.tabBarContainer, {backgroundColor: unfocusColor}]}>
+    <LinearGradient
+      colors={[unfocusColor, backgroundColor]}
+      start={{ x: 0, y: 1 }}
+      end={{ x: 0, y: 0 }}
+      locations={[0, 1]}
+      style={[styles.tabBarContainer]}
+    >
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label =
@@ -59,7 +71,13 @@ export default function CustomTab({ state, descriptors, navigation , themeValue}
             onLongPress={onLongPress}
             style={styles.tabItem}
           >
-            <View style={[styles.background, {backgroundColor: focusColor}]}>
+            <LinearGradient
+              colors={[focusColor, gradientColor2]}
+              start={{ x: 0, y: 1 }}
+              end={{ x: 0, y: 0 }}
+              locations={[0, 1]}
+              style={[styles.background]}
+            >
               {options.tabBarIcon &&
                 options.tabBarIcon({
                   focused: isFocused,
@@ -67,19 +85,19 @@ export default function CustomTab({ state, descriptors, navigation , themeValue}
                   size: 24,
                 })}
               {isFocused && <Text style={[styles.word]}>{label}</Text>}
-            </View>
+            </LinearGradient>
           </TouchableOpacity>
         );
       })}
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   tabBarContainer: {
     flexDirection: "row",
-    borderTopWidth: 1,
-    borderTopColor: "#eee",
+    // borderTopWidth: 1,
+    // borderTopColor: "#eee",
     paddingVertical: 0,
   },
   tabItem: {

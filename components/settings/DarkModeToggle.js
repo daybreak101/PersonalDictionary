@@ -13,15 +13,18 @@ export default function DarkModeToggle() {
     backgroundColor,
     fadeColor1,
     fadeColor2,
+    darkMode,
+    toggleDarkMode
   } = useTheme();
 
   const toggleSwitch = () => {
-    setIsEnabled((prev) => !prev);
+    toggleDarkMode();
   };
 
   return (
     <Pressable style={styles.pressable}>
       <Text style={styles.text}>Dark Mode</Text>
+      <Switch onValueChange={toggleSwitch} value={darkMode} />
     </Pressable>
   );
 }

@@ -9,13 +9,26 @@ import Animated, {
   useAnimatedStyle,
   Easing,
 } from "react-native-reanimated";
-import data from "../data/randomWord.json"
+import LinearGradient from "react-native-linear-gradient";
+import data from "../data/randomWord.json";
+import { useTheme } from "../context/ThemeContext";
 
 export default function WordOfTheDay({
   isFocused,
   setWordSearched,
   handleSubmit,
 }) {
+  const {
+    gradientColor1,
+    gradientColor2,
+    focusColor,
+    unfocusColor,
+    textColor,
+    backgroundColor,
+    fadeColor1,
+    fadeColor2,
+  } = useTheme();
+
   const [word, setWord] = useState("");
   useEffect(() => {
     getWord();
@@ -23,7 +36,7 @@ export default function WordOfTheDay({
 
   const getWord = async () => {
     try {
-      setWord(data[Math.floor(Math.random() * data.length)])
+      setWord(data[Math.floor(Math.random() * data.length)]);
     } catch (error) {
       setWord("Cannot fetch word");
       console.log(error);
@@ -31,14 +44,25 @@ export default function WordOfTheDay({
   };
 
   return (
-    <View style={[{ display: isFocused ? "none" : "flex" }, styles.wordView]}>
-      <Pressable style={styles.wordBox} onPress={() => handleSubmit(word)}>
-        <Text style={styles.title}>Word of the Day</Text>
-        <Text style={styles.word}>{word}</Text>
-        <Pressable style={styles.refresh} onPress={() => getWord()}>
-          <FontAwesome name="refresh" size={24} color="black" />
+    <View style={[styles.wordView]}>
+      <LinearGradient
+        colors={[gradientColor2,  gradientColor2, unfocusColor]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        locations={[0, 0.6, 1]}
+        style={[
+          { display: isFocused ? "none" : "flex", shadowColor: gradientColor2, borderColor: focusColor },
+          styles.wordBox,
+        ]}
+      >
+        <Pressable style={styles.pressable} onPress={() => handleSubmit(word)}>
+          <Text style={[styles.title, {color: textColor}]}>Word of the Day</Text>
+          <Text style={[styles.word, {color: textColor}]}>{word}</Text>
+          <Pressable style={styles.refresh} onPress={() => getWord()}>
+            <FontAwesome name="refresh" size={24} color="black" />
+          </Pressable>
         </Pressable>
-      </Pressable>
+      </LinearGradient>
     </View>
   );
 }
@@ -48,15 +72,16 @@ const styles = StyleSheet.create({
     flex: 6,
     width: "100%",
     padding: 20,
+    
   },
   wordBox: {
     flex: 1,
-    backgroundColor: "#e6fcff",
     borderWidth: 2,
-    borderColor: "#c8c8c8ff",
-    borderRadius: 30,
-    shadowColor: "blue",
+    borderRadius: 20,
     elevation: 100,
+  },
+  pressable: {
+    flex: 1,
   },
   title: {
     fontSize: 30,
