@@ -23,7 +23,7 @@ export default function DarkModeToggle() {
 
   return (
     <Pressable style={styles.pressable}>
-      <Text style={styles.text}>Dark Mode</Text>
+      <Text style={[styles.text, {color: textColor}]}>Dark Mode</Text>
       <Switch onValueChange={toggleSwitch} value={darkMode} />
     </Pressable>
   );

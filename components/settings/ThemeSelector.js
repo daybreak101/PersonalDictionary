@@ -24,6 +24,7 @@ export default function ThemeSelector() {
     setTheme,
     themeValue,
     setThemeValue,
+    textColor
   } = useTheme();
 
   const [contentHeight, setContentHeight] = useState(0);
@@ -61,9 +62,9 @@ export default function ThemeSelector() {
   return (
     <>
       <Pressable style={styles.pressable} onPress={() => toggleExpand()}>
-        <Text style={styles.text}>Theme</Text>
+        <Text style={[styles.text, {color: textColor}]}>Theme</Text>
         <View style={styles.selectedTheme}>
-          <Text style={styles.selectedText}>{themeValue}</Text>
+          <Text style={[styles.selectedText, {color: textColor}]}>{themeValue}</Text>
           <View style={styles.colors}>
             <View
               style={[
@@ -110,31 +111,31 @@ export default function ThemeSelector() {
             style={styles.option}
             onPress={() => toggleTheme("Default")}
           >
-            <Text>Default</Text>
+            <Text style={{color: textColor}}>Default</Text>
           </Pressable>
           <Pressable
             style={styles.option}
             onPress={() => toggleTheme("Iridescent")}
           >
-            <Text>Iridescent</Text>
+            <Text style={{color: textColor}}>Iridescent</Text>
           </Pressable>
           <Pressable
             style={styles.option}
             onPress={() => toggleTheme("Soft Pearl")}
           >
-            <Text>Soft Pearl</Text>
+            <Text style={{color: textColor}}>Soft Pearl</Text>
           </Pressable>
           <Pressable style={styles.option} onPress={() => toggleTheme("Prism")}>
-            <Text>Prism</Text>
+            <Text style={{color: textColor}}>Prism</Text>
           </Pressable>
           <Pressable style={styles.option} onPress={() => toggleTheme("Comet")}>
-            <Text>Comet</Text>
+            <Text style={{color: textColor}}>Comet</Text>
           </Pressable>
           <Pressable
             style={styles.option}
             onPress={() => toggleTheme("Monochrome")}
           >
-            <Text>Monochrome</Text>
+            <Text style={{color: textColor}}>Monochrome</Text>
           </Pressable>
         </View>
       </Animated.View>

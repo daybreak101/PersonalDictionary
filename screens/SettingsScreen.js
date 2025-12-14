@@ -12,11 +12,26 @@ import YesNoModal from "../components/YesNoModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ThemeSelector from "../components/settings/ThemeSelector";
 import DarkModeToggle from "../components/settings/DarkModeToggle";
+import { useTheme } from "../context/ThemeContext";
+import HapticFeedback from "../components/settings/HapticFeedback";
+import ScreenReader from "../components/settings/ScreenReader";
 
 export default function SettingsScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDesc, setModalDesc] = useState("");
   const [selectedFunc, setSelectedFunc] = useState(() => {});
+
+  const {
+    gradientColor1,
+    gradientColor2,
+    focusColor,
+    unfocusColor,
+    textColor,
+    backgroundColor,
+    fadeColor1,
+    fadeColor2,
+    darkMode,
+  } = useTheme();
 
   const clearRecentSearches = async () => {
     try {
@@ -35,22 +50,18 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: backgroundColor}]}>
       <YesNoModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         desc={modalDesc}
         func={selectedFunc}
       />
-      <Text style={styles.header}>Settings</Text>
+      <Text style={[styles.header, {color: textColor}]}>Settings</Text>
       <ThemeSelector />
       <DarkModeToggle />
-      <Pressable style={styles.pressable}>
-        <Text style={styles.text}>Haptic Feedback</Text>
-      </Pressable>
-      <Pressable style={styles.pressable}>
-        <Text style={styles.text}>Screen Reader</Text>
-      </Pressable>
+      <HapticFeedback />
+      <ScreenReader />
       <Pressable
         style={styles.pressable}
         onPress={() => {
@@ -59,7 +70,7 @@ export default function SettingsScreen() {
           setSelectedFunc(() => clearRecentSearches);
         }}
       >
-        <Text style={styles.text}>Clear Recent Searches</Text>
+        <Text style={[styles.text, {color: textColor}]}>Clear Recent Searches</Text>
       </Pressable>
       <Pressable
         style={styles.pressable}
@@ -69,7 +80,7 @@ export default function SettingsScreen() {
           setSelectedFunc(() => clearSavedWords);
         }}
       >
-        <Text style={styles.text}>Clear Saved Words</Text>
+        <Text style={[styles.text, {color: textColor}]}>Clear Saved Words</Text>
       </Pressable>
     </View>
   );
@@ -78,7 +89,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20
+    padding: 20,
   },
   header: {
     fontSize: 30,

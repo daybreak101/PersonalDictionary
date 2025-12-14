@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, Pressable, Vibration } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import Entypo from "@expo/vector-icons/Entypo";
 import YesNoModal from "../components/YesNoModal";
+import EditModal from "../components/EditModal";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Animated, {
   useSharedValue,
@@ -18,9 +19,26 @@ import { RadialGradient } from "react-native-gradients";
 import RNHapticFeedback from "react-native-haptic-feedback";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
 
-export default function DefinitionCard({ item, deleteItem }) {
+export default function DefinitionCard({
+  item,
+  deleteItem,
+  editItem,
+  refresh,
+}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDesc, setModalDesc] = useState("");
+  const [editModalVisible, setEditModalVisible] = useState(false);
+
+  const [citations, setCitations] = useState([]);
+
+  useEffect(() => {
+    setCitations(item.info.citations ?? []);
+  }, [item]);
+
+  useEffect(() => {
+    setContentHeight(0);
+  }, [contentVersion]);
+  const contentVersion = item.info.citations?.length ?? 0;
 
   const {
     gradientColor1,
@@ -49,9 +67,7 @@ export default function DefinitionCard({ item, deleteItem }) {
   };
 
   const handleContentLayout = (event) => {
-    if (contentHeight === 0) {
-      setContentHeight(event.nativeEvent.layout.height);
-    }
+    setContentHeight(event.nativeEvent.layout.height);
   };
 
   const animatedExpansionStyle = useAnimatedStyle(() => {
@@ -95,7 +111,16 @@ export default function DefinitionCard({ item, deleteItem }) {
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
           desc={modalDesc}
-          func={() => deleteItem(item.word)}
+          func={() => deleteItem(item.timestamp)}
+        />
+        <EditModal
+          modalVisible={editModalVisible}
+          setModalVisible={setEditModalVisible}
+          item={item}
+          func={async (updatedCitations) => {
+            await editItem(item.timestamp, updatedCitations);
+            refresh();
+          }}
         />
 
         <Pressable style={styles.wordContainer} onPress={() => toggleExpand()}>
@@ -133,17 +158,46 @@ export default function DefinitionCard({ item, deleteItem }) {
                 Antonyms: {item.info.antonyms.join(", ")}
               </Text>
             )}
-            <Pressable
-              style={styles.refresh}
-              onPress={() => {
-                setModalVisible(true);
-                setModalDesc(
-                  `Are you sure you want to delete ${item.word} from your dictionary?`
-                );
-              }}
-            >
-              <Entypo name="trash" size={24} color="black" />
-            </Pressable>
+
+            {item.info.citations.length > 0 && (
+              <Text style={styles.definition}>Quotes:</Text>
+            )}
+            {item.info.citations?.length > 0 &&
+              item.info.citations.map((i, index) => (
+                <View key={index} style={styles.citation}>
+                  <Text style={styles.quote}>"{i.quote}"</Text>
+
+                  {i.sourceTitle !== "" && (
+                    <Text style={styles.title}>— {i.sourceTitle}</Text>
+                  )}
+                  {i.sourceAuthor !== "" && (
+                    <Text style={styles.author}> by {i.sourceAuthor}</Text>
+                  )}
+                </View>
+              ))}
+            <View style={styles.actions}>
+              <Pressable
+                style={styles.pressable}
+                onPress={() => {
+                  setEditModalVisible(true);
+                }}
+              >
+                <Text>Edit</Text>
+                <Entypo name="edit" size={24} color="black" />
+              </Pressable>
+              <Pressable
+                style={styles.pressable}
+                onPress={() => {
+                  setModalVisible(true);
+                  setModalDesc(
+                    `Are you sure you want to delete ${item.word} from your dictionary?`
+                  );
+                }}
+              >
+                <Text>Delete</Text>
+                <Entypo name="trash" size={24} color="black" />
+              </Pressable>
+            </View>
           </View>
         </Animated.View>
       </LinearGradient>
@@ -183,5 +237,27 @@ const styles = StyleSheet.create({
   similars: {
     padding: 10,
     fontSize: 15,
+  },
+  actions: {
+    padding: 10,
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  pressable: {
+    flexDirection: "row",
+    gap: 5,
+    alignItems: "center",
+  },
+  citation: {
+    paddingHorizontal: 20,
+    paddingBottom: 10,
+  },
+  quote: {
+    fontStyle: "italic",
+    fontSize: 16
+  },
+  title: {},
+  author: {
+    paddingLeft: 15
   },
 });

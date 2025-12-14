@@ -20,17 +20,17 @@ export default function MyWordsList() {
   const [fullSavedWords, setFullSavedWords] = useState([]);
   const [refreshFlag, setRefreshFlag] = useState(false);
 
-    const {
-        gradientColor1,
-        gradientColor2,
-        focusColor,
-        unfocusColor,
-        textColor,
-        backgroundColor,
-        fadeColor1,
-        fadeColor2,
-        darkMode
-      } = useTheme(); 
+  const {
+    gradientColor1,
+    gradientColor2,
+    focusColor,
+    unfocusColor,
+    textColor,
+    backgroundColor,
+    fadeColor1,
+    fadeColor2,
+    darkMode,
+  } = useTheme();
 
   const getAllItems = async () => {
     try {
@@ -54,7 +54,9 @@ export default function MyWordsList() {
       const jsonValue = await AsyncStorage.getItem("words");
       const wordsArray = jsonValue != null ? JSON.parse(jsonValue) : [];
       const filteredArray = wordsArray.filter(
-        (item) => String(item.word) !== String(key)
+        (item) =>
+          // String(item.word) !== String(key)
+          item.timestamp !== key
       );
       await AsyncStorage.setItem("words", JSON.stringify(filteredArray));
       console.log("Deletion successful");
@@ -64,8 +66,27 @@ export default function MyWordsList() {
     }
   };
 
+  const editItem = async (key, updatedCitations) => {
+    try {
+      const jsonValue = await AsyncStorage.getItem("words");
+      const wordsArray = jsonValue != null ? JSON.parse(jsonValue) : [];
+
+      const filteredArray = wordsArray.map((item) =>
+        item.timestamp === key
+          ? { ...item, info: { ...item.info, citations: updatedCitations } }
+          : item
+      );
+
+      await AsyncStorage.setItem("words", JSON.stringify(filteredArray));
+      console.log("Edit successful");
+      setRefreshFlag((prev) => !prev);
+    } catch (error) {
+      console.log("Error editing item:", error);
+    }
+  };
+
   return (
-    <View style={[styles.container, {backgroundColor: backgroundColor}]}>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       <MyWordsSearch
         fullSavedWords={fullSavedWords}
         setSavedWords={setSavedWords}
@@ -75,7 +96,14 @@ export default function MyWordsList() {
         data={savedWords}
         keyExtractor={(item) => item.timestamp.toString()}
         renderItem={({ item }) => {
-          return <DefinitionCard item={item} deleteItem={deleteItem} />;
+          return (
+            <DefinitionCard
+              item={item}
+              deleteItem={deleteItem}
+              editItem={editItem}
+              refresh={() => getAllItems()}
+            />
+          );
         }}
         ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
         ListEmptyComponent={
@@ -102,7 +130,7 @@ export default function MyWordsList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%" 
+    width: "100%",
   },
   wordList: {
     flex: 1,
