@@ -44,7 +44,7 @@ export default function EditModal({
       <View style={styles.overlay}>
         <View style={styles.container}>
           <Text style={styles.header}>{item.word}</Text>
-          {item.info.citations?.length > 0 &&
+          {/* {item.info.citations?.length > 0 &&
             item.info.citations.map((citation, index) => (
               <View key={index}>
                 <Text>{citation.quote}</Text>
@@ -55,7 +55,7 @@ export default function EditModal({
                   <Text>{citation.sourceAuthor}</Text>
                 )}
               </View>
-            ))}
+            ))} */}
 
           <View>
             <Text>Add a new citation?</Text>
