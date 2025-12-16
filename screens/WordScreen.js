@@ -1,15 +1,35 @@
-import { StyleSheet, Text, View, FlatList } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import Constants from "expo-constants";
 import WordCard from "../components/WordCard";
+import { useTheme } from "../context/ThemeContext";
 
 export default function WordScreen({ word }) {
   const [definitions, setDefinitions] = useState([]);
+  const [loading, setLoading] = useState(false);
   const lastWord = useRef("");
+
+  const {
+    gradientColor1,
+    gradientColor2,
+    focusColor,
+    unfocusColor,
+    textColor,
+    backgroundColor,
+    fadeColor1,
+    fadeColor2,
+    darkMode
+  } = useTheme();
 
   useEffect(() => {
     const getDefinition = async () => {
+      setLoading(true);
       if (lastWord.current !== word) {
         setDefinitions([]);
       }
@@ -24,11 +44,11 @@ export default function WordScreen({ word }) {
         let pronounce = "";
         let partOfSpeech = "";
 
-        if(apiDef.title === "No Definitions Found"){
-          setDefinitions([])
-          return 
+        if (apiDef.title === "No Definitions Found") {
+          setDefinitions([]);
+          return;
         }
-        
+
         for (let i of apiDef) {
           word2 = i.word;
           for (let phonetic of i.phonetics) {
@@ -41,8 +61,8 @@ export default function WordScreen({ word }) {
             partOfSpeech = meaning.partOfSpeech;
             for (let def of meaning.definitions) {
               const definition = def.definition;
-              const synonyms = def.synonyms
-              const antonyms = def.antonyms
+              const synonyms = def.synonyms;
+              const antonyms = def.antonyms;
               setDefinitions((prev) => [
                 ...prev,
                 {
@@ -51,26 +71,18 @@ export default function WordScreen({ word }) {
                   partOfSpeech: partOfSpeech,
                   definition: definition,
                   synonyms: synonyms,
-                  antonyms: antonyms
+                  antonyms: antonyms,
                 },
               ]);
             }
           }
         }
-        console.log(definitions);
-        // let apiDef =
-        //   res2.data?.[0]?.meanings?.[0]?.definitions
-        //     ?.map((def) => def.definition)
-        //     ?.filter((d) => typeof d === "string") || [];
-        // console.log(res2.data)
-        // setDefinitions((prev) => {
-        //   return [...apiDef];
-        // });
-
         lastWord.current = word;
+        setLoading(false);
       } catch (error) {
-        setDefinitions(["Cannot fetch definition"]);
+        setDefinitions([]);
         console.log(error);
+        setLoading(false);
       }
     };
     getDefinition();
@@ -78,30 +90,33 @@ export default function WordScreen({ word }) {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        style={styles.wordList}
-        data={definitions}
-        renderItem={({ item }) => {
-          return <WordCard word={word} definition={item} />;
-        }}
-        ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
-        ListEmptyComponent={
-          <View
-            style={{
-              flexGrow: 1,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Text>No items found</Text>
-          </View>
-        }
-        contentContainerStyle={{
-          paddingVertical: 40,
-          paddingHorizontal: 20,
-          // backgroundColor: "#ffffffff",
-        }}
-      />
+      {loading ? (
+        <ActivityIndicator style={styles.activity} size="large" color={darkMode ? focusColor : unfocusColor}/>
+      ) : (
+        <FlatList
+          style={styles.wordList}
+          data={definitions}
+          renderItem={({ item }) => {
+            return <WordCard word={word} definition={item} />;
+          }}
+          ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+          ListEmptyComponent={
+            <View
+              style={{
+                flexGrow: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{color: textColor}}>No items found</Text>
+            </View>
+          }
+          contentContainerStyle={{
+            paddingVertical: 40,
+            paddingHorizontal: 20,
+          }}
+        />
+      )}
     </View>
   );
 }
@@ -116,5 +131,11 @@ const styles = StyleSheet.create({
   },
   word: {
     padding: 10,
+  },
+  activity: {
+    flex: 1,
+    justifyContent: "center",
+    alignSelf: "center",
+    transform: [{ scale: 3 }],
   },
 });

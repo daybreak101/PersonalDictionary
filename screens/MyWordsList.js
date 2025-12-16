@@ -14,13 +14,16 @@ import DefinitionCard from "../components/DefinitionCard";
 import { useFocusEffect } from "@react-navigation/native";
 import MyWordsSearch from "../components/MyWordsSearch";
 import { useTheme } from "../context/ThemeContext";
+import { useRefresh } from "../context/RefreshContext";
 import Animated, { LinearTransition } from "react-native-reanimated";
 
 export default function MyWordsList() {
   const [savedWords, setSavedWords] = useState([]);
   const [fullSavedWords, setFullSavedWords] = useState([]);
-  const [refreshFlag, setRefreshFlag] = useState(false);
+  //const [refreshFlag, setRefreshFlag] = useState(false);
   const [currentMax, setCurrentMax] = useState(0);
+
+  const { refreshFlag, setRefreshFlag } = useRefresh();
 
   const {
     gradientColor1,
@@ -153,15 +156,21 @@ export default function MyWordsList() {
               padding: 20,
               alignItems: "center",
               justifyContent: "center",
+              color: textColor,
             }}
           >
-            <Text>Load More Words</Text>
+            <Text
+              style={{
+                color: textColor,
+              }}
+            >
+              Load More Words
+            </Text>
           </Pressable>
         )}
         contentContainerStyle={{
-          paddingVertical: 40,
+          paddingTop: 40,
           paddingHorizontal: 20,
-          // backgroundColor: "#ffffffff",
         }}
         itemLayoutAnimation={LinearTransition}
       />

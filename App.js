@@ -12,6 +12,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { NotifProvider } from "./context/NotifContext";
 import CustomTab from "./components/CustomTab";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
+import { RefreshProvider, useRefresh } from "./context/RefreshContext";
 
 function TabNavigator() {
   return (
@@ -60,22 +61,24 @@ function TabNavigator() {
 const Tab = createBottomTabNavigator();
 export default function App() {
   return (
-    <ThemeProvider>
-      <NotifProvider>
-        <SafeAreaProvider>
-          <SafeAreaView style={{ flex: 1 }}>
-            <StatusBar
-              style="light"
-              translucent={false}
-              backgroundColor="black"
-              hidden={false}
-            />
-            <NavigationContainer>
-              <TabNavigator/>
-            </NavigationContainer>
-          </SafeAreaView>
-        </SafeAreaProvider>
-      </NotifProvider>
-    </ThemeProvider>
+    <RefreshProvider>
+      <ThemeProvider>
+        <NotifProvider>
+          <SafeAreaProvider>
+            <SafeAreaView style={{ flex: 1 }}>
+              <StatusBar
+                style="light"
+                translucent={false}
+                backgroundColor="black"
+                hidden={false}
+              />
+              <NavigationContainer>
+                <TabNavigator />
+              </NavigationContainer>
+            </SafeAreaView>
+          </SafeAreaProvider>
+        </NotifProvider>
+      </ThemeProvider>
+    </RefreshProvider>
   );
 }

@@ -3,9 +3,11 @@ import React, { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useNotif } from "../context/NotifContext";
+import { useRefresh } from "../context/RefreshContext";
 
 export default function WordCard({ definition, word }) {
   const { setNotifVisible, setNotifDesc } = useNotif();
+  const { refreshFlag, setRefreshFlag } = useRefresh()
 
   useEffect(() => {
     console.log("definition: " + definition);
@@ -23,6 +25,7 @@ export default function WordCard({ definition, word }) {
         await AsyncStorage.setItem("words", JSON.stringify(wordsArray));
         setNotifVisible(true);
         setNotifDesc(key + " has been added to your dictionary");
+        await setRefreshFlag((prev) => !prev)
       }
       console.log("Save successful");
     } catch (error) {
