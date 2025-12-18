@@ -16,26 +16,21 @@ import MyWordsSearch from "../components/MyWordsSearch";
 import { useTheme } from "../context/ThemeContext";
 import { useRefresh } from "../context/RefreshContext";
 import Animated, { LinearTransition } from "react-native-reanimated";
+import RNHapticFeedback from "react-native-haptic-feedback";
 
 export default function MyWordsList() {
+  //collection of words that are currently displayed
+  const [renderedWords, setRenderedWords] = useState([]);
+  //collection of words that matches filters
   const [savedWords, setSavedWords] = useState([]);
+  //entire collection of saved words
   const [fullSavedWords, setFullSavedWords] = useState([]);
-  //const [refreshFlag, setRefreshFlag] = useState(false);
   const [currentMax, setCurrentMax] = useState(0);
 
   const { refreshFlag, setRefreshFlag } = useRefresh();
 
-  const {
-    gradientColor1,
-    gradientColor2,
-    focusColor,
-    unfocusColor,
-    textColor,
-    backgroundColor,
-    fadeColor1,
-    fadeColor2,
-    darkMode,
-  } = useTheme();
+  const { themeObject, textColor, backgroundColor, hapticFeedback } =
+    useTheme();
 
   const getAllItems = async () => {
     try {
@@ -72,12 +67,9 @@ export default function MyWordsList() {
     });
   };
 
-  // useFocusEffect(
-  //   useCallback(() => {
   useEffect(() => {
     refreshList();
   }, [refreshFlag]);
-  // );
 
   const deleteItem = async (key) => {
     try {
@@ -148,28 +140,36 @@ export default function MyWordsList() {
             <Text>No items found</Text>
           </View>
         }
-        ListFooterComponent={() => (
-          <Pressable
-            onPress={() => loadMore()}
-            style={{
-              width: "100%",
-              padding: 20,
-              alignItems: "center",
-              justifyContent: "center",
-              color: textColor,
-            }}
-          >
-            <Text
+        ListFooterComponent={() =>
+          currentMax < fullSavedWords.length && (
+            <Pressable
+              onPress={() => {
+                if (hapticFeedback) {
+                  RNHapticFeedback.trigger("impactHeavy");
+                }
+                loadMore();
+              }}
               style={{
+                width: "100%",
+                padding: 20,
+                alignItems: "center",
+                justifyContent: "center",
                 color: textColor,
               }}
             >
-              Load More Words
-            </Text>
-          </Pressable>
-        )}
+              <Text
+                style={{
+                  color: textColor,
+                }}
+              >
+                Load More Words
+              </Text>
+            </Pressable>
+          )
+        }
         contentContainerStyle={{
-          paddingTop: 40,
+          paddingTop: 20,
+          paddingBottom: 20,
           paddingHorizontal: 20,
         }}
         itemLayoutAnimation={LinearTransition}

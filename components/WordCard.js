@@ -4,13 +4,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useNotif } from "../context/NotifContext";
 import { useRefresh } from "../context/RefreshContext";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useAudioPlayer } from "expo-audio";
+
 
 export default function WordCard({ definition, word }) {
   const { setNotifVisible, setNotifDesc } = useNotif();
-  const { refreshFlag, setRefreshFlag } = useRefresh()
+  const { refreshFlag, setRefreshFlag } = useRefresh();
 
   useEffect(() => {
-    console.log("definition: " + definition);
+    console.log("definition: " + JSON.stringify(definition));
     console.log(word);
   }, []);
 
@@ -21,11 +24,15 @@ export default function WordCard({ definition, word }) {
       const wordObj = wordsArray.find((item) => item.word === key);
 
       if (!wordObj) {
-        wordsArray.unshift({ word: key, info: {...value, citations: []}, timestamp: Date.now() });
+        wordsArray.unshift({
+          word: key,
+          info: { ...value, citations: [] },
+          timestamp: Date.now(),
+        });
         await AsyncStorage.setItem("words", JSON.stringify(wordsArray));
         setNotifVisible(true);
         setNotifDesc(key + " has been added to your dictionary");
-        await setRefreshFlag((prev) => !prev)
+        await setRefreshFlag((prev) => !prev);
       }
       console.log("Save successful");
     } catch (error) {
@@ -37,20 +44,36 @@ export default function WordCard({ definition, word }) {
     return null;
   }
 
+  const player = useAudioPlayer(definition.pronounce, {
+    downloadFirst: true
+  })
+
+
   return (
     <View style={styles.card}>
       <Text>{definition.partOfSpeech}</Text>
       <Text style={styles.definition}>{definition.definition}</Text>
+      {definition.synonyms?.length > 0 && (
+        <Text>Synonyms: {definition.synonyms.join(", ")}</Text>
+      )}
+      {definition.antonyms?.length > 0 && (
+        <Text>Antonyms: {definition.antonyms.join(", ")}</Text>
+      )}
+      {definition.pronounce && (
+        <Pressable
+          style={styles.refresh}
+          onPress={ () => {
+            player.seekTo(0)
+            player.play()
+          }}
+        >
+          <MaterialCommunityIcons name="volume-high" size={24} color="black" />
+        </Pressable>
+      )}
       <Pressable
         style={styles.refresh}
         onPress={() => saveItem(word, definition)}
       >
-        {definition.synonyms?.length > 0 && (
-          <Text>Synonyms: {definition.synonyms.join(", ")}</Text>
-        )}
-        {definition.antonyms?.length > 0 && (
-          <Text>Antonyms: {definition.antonyms.join(", ")}</Text>
-        )}
         <FontAwesome6 name="add" size={24} color="black" />
       </Pressable>
     </View>

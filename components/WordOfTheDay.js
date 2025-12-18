@@ -12,22 +12,14 @@ import Animated, {
 import LinearGradient from "react-native-linear-gradient";
 import data from "../data/randomWord.json";
 import { useTheme } from "../context/ThemeContext";
+import RNHapticFeedback from "react-native-haptic-feedback";
 
 export default function WordOfTheDay({
   isFocused,
   setWordSearched,
   handleSubmit,
 }) {
-  const {
-    gradientColor1,
-    gradientColor2,
-    focusColor,
-    unfocusColor,
-    textColor,
-    backgroundColor,
-    fadeColor1,
-    fadeColor2,
-  } = useTheme();
+  const { themeObject, textColor, backgroundColor, hapticFeedback } = useTheme();
 
   const [word, setWord] = useState("");
   useEffect(() => {
@@ -46,18 +38,36 @@ export default function WordOfTheDay({
   return (
     <View style={[styles.wordView]}>
       <LinearGradient
-        colors={[gradientColor2,  gradientColor2, unfocusColor]}
+        colors={[
+          themeObject.gradientColor2,
+          themeObject.gradientColor2,
+          themeObject.unfocusColor,
+        ]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         locations={[0, 0.6, 1]}
         style={[
-          { display: isFocused ? "none" : "flex", shadowColor: gradientColor2, borderColor: focusColor },
+          {
+            display: isFocused ? "none" : "flex",
+            shadowColor: themeObject.gradientColor2,
+            borderColor: themeObject.focusColor,
+          },
           styles.wordBox,
         ]}
       >
-        <Pressable style={styles.pressable} onPress={() => handleSubmit(word)}>
-          <Text style={[styles.title, {color: textColor}]}>Word of the Day</Text>
-          <Text style={[styles.word, {color: textColor}]}>{word}</Text>
+        <Pressable
+          style={styles.pressable}
+          onPress={() => {
+            if (hapticFeedback) {
+              RNHapticFeedback.trigger("impactHeavy");
+            }
+            handleSubmit(word);
+          }}
+        >
+          <Text style={[styles.title, { color: textColor }]}>
+            Word of the Day
+          </Text>
+          <Text style={[styles.word, { color: textColor }]}>{word}</Text>
           <Pressable style={styles.refresh} onPress={() => getWord()}>
             <FontAwesome name="refresh" size={24} color="black" />
           </Pressable>
@@ -72,7 +82,6 @@ const styles = StyleSheet.create({
     flex: 6,
     width: "100%",
     padding: 20,
-    
   },
   wordBox: {
     flex: 1,

@@ -15,16 +15,12 @@ import Animated, {
 
 export default function ThemeSelector() {
   const {
-    gradientColor1,
-    gradientColor2,
-    focusColor,
-    unfocusColor,
-    fadeColor1,
-    fadeColor2,
+    themeObject,
     setTheme,
     themeValue,
     setThemeValue,
-    textColor
+    textColor,
+    hapticFeedback,
   } = useTheme();
 
   const [contentHeight, setContentHeight] = useState(0);
@@ -34,9 +30,12 @@ export default function ThemeSelector() {
     ignoreAndroidSystemSettings: false,
   };
   const toggleExpand = () => {
-    RNHapticFeedback.trigger("impactHeavy", options);
+    if (hapticFeedback) {
+      RNHapticFeedback.trigger("impactHeavy", options);
+    }
     expanded.value = withTiming(expanded.value ? 0 : 1, { duration: 200 });
   };
+
   const handleContentLayout = (event) => {
     if (contentHeight === 0) {
       setContentHeight(event.nativeEvent.layout.height);
@@ -54,44 +53,58 @@ export default function ThemeSelector() {
     };
   });
 
-  const toggleTheme = (theme) => {
-    setTheme(theme);
-    setThemeValue(theme);
+  const toggleTheme = async (theme) => {
+    if (hapticFeedback) {
+      RNHapticFeedback.trigger("effectClick");
+    }
+    await setTheme(theme);
+    await setThemeValue(theme);
   };
 
   return (
     <>
       <Pressable style={styles.pressable} onPress={() => toggleExpand()}>
-        <Text style={[styles.text, {color: textColor}]}>Theme</Text>
+        <Text style={[styles.text, { color: textColor }]}>Theme</Text>
         <View style={styles.selectedTheme}>
-          <Text style={[styles.selectedText, {color: textColor}]}>{themeValue}</Text>
+          <Text style={[styles.selectedText, { color: textColor }]}>
+            {themeValue}
+          </Text>
           <View style={styles.colors}>
             <View
               style={[
                 styles.circle,
-                { backgroundColor: gradientColor1, left: 0 },
+                { backgroundColor: themeObject.gradientColor1, left: 0 },
               ]}
             ></View>
             <View
               style={[
                 styles.circle,
-                { backgroundColor: gradientColor2, left: 15 },
+                { backgroundColor: themeObject.gradientColor2, left: 15 },
               ]}
-            ></View>
-            <View
-              style={[styles.circle, { backgroundColor: focusColor, left: 30 }]}
             ></View>
             <View
               style={[
                 styles.circle,
-                { backgroundColor: unfocusColor, left: 45 },
+                { backgroundColor: themeObject.focusColor, left: 30 },
               ]}
             ></View>
             <View
-              style={[styles.circle, { backgroundColor: fadeColor1, left: 60 }]}
+              style={[
+                styles.circle,
+                { backgroundColor: themeObject.unfocusColor, left: 45 },
+              ]}
             ></View>
             <View
-              style={[styles.circle, { backgroundColor: fadeColor2, left: 75 }]}
+              style={[
+                styles.circle,
+                { backgroundColor: themeObject.fadeColor1, left: 60 },
+              ]}
+            ></View>
+            <View
+              style={[
+                styles.circle,
+                { backgroundColor: themeObject.fadeColor2, left: 75 },
+              ]}
             ></View>
           </View>
         </View>
@@ -111,31 +124,31 @@ export default function ThemeSelector() {
             style={styles.option}
             onPress={() => toggleTheme("Default")}
           >
-            <Text style={{color: textColor}}>Default</Text>
+            <Text style={{ color: textColor }}>Default</Text>
           </Pressable>
           <Pressable
             style={styles.option}
             onPress={() => toggleTheme("Iridescent")}
           >
-            <Text style={{color: textColor}}>Iridescent</Text>
+            <Text style={{ color: textColor }}>Iridescent</Text>
           </Pressable>
           <Pressable
             style={styles.option}
             onPress={() => toggleTheme("Soft Pearl")}
           >
-            <Text style={{color: textColor}}>Soft Pearl</Text>
+            <Text style={{ color: textColor }}>Soft Pearl</Text>
           </Pressable>
           <Pressable style={styles.option} onPress={() => toggleTheme("Prism")}>
-            <Text style={{color: textColor}}>Prism</Text>
+            <Text style={{ color: textColor }}>Prism</Text>
           </Pressable>
           <Pressable style={styles.option} onPress={() => toggleTheme("Comet")}>
-            <Text style={{color: textColor}}>Comet</Text>
+            <Text style={{ color: textColor }}>Comet</Text>
           </Pressable>
           <Pressable
             style={styles.option}
             onPress={() => toggleTheme("Monochrome")}
           >
-            <Text style={{color: textColor}}>Monochrome</Text>
+            <Text style={{ color: textColor }}>Monochrome</Text>
           </Pressable>
         </View>
       </Animated.View>

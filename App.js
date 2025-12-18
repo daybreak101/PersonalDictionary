@@ -1,9 +1,7 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import MyWordsStack from "./stack/MyWordsStack";
 import SearchStack from "./stack/SearchStack";
 import SettingsStack from "./stack/SettingsStack";
@@ -11,8 +9,8 @@ import Foundation from "@expo/vector-icons/Foundation";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { NotifProvider } from "./context/NotifContext";
 import CustomTab from "./components/CustomTab";
-import { ThemeProvider, useTheme } from "./context/ThemeContext";
-import { RefreshProvider, useRefresh } from "./context/RefreshContext";
+import { ThemeProvider } from "./context/ThemeContext";
+import { RefreshProvider } from "./context/RefreshContext";
 
 function TabNavigator() {
   return (
@@ -62,23 +60,23 @@ const Tab = createBottomTabNavigator();
 export default function App() {
   return (
     <RefreshProvider>
-      <ThemeProvider>
-        <NotifProvider>
-          <SafeAreaProvider>
-            <SafeAreaView style={{ flex: 1 }}>
-              <StatusBar
-                style="light"
-                translucent={false}
-                backgroundColor="black"
-                hidden={false}
-              />
-              <NavigationContainer>
-                <TabNavigator />
-              </NavigationContainer>
-            </SafeAreaView>
-          </SafeAreaProvider>
-        </NotifProvider>
-      </ThemeProvider>
+        <ThemeProvider>
+          <NotifProvider>
+            <SafeAreaProvider>
+              <SafeAreaView style={{ flex: 1 }}>
+                <StatusBar
+                  style="light"
+                  translucent={false}
+                  backgroundColor="black"
+                  hidden={false}
+                />
+                <NavigationContainer>
+                  <TabNavigator />
+                </NavigationContainer>
+              </SafeAreaView>
+            </SafeAreaProvider>
+          </NotifProvider>
+        </ThemeProvider>
     </RefreshProvider>
   );
 }

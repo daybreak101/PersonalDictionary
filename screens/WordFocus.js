@@ -7,6 +7,8 @@ import Entypo from "@expo/vector-icons/Entypo";
 import YesNoModal from "../components/YesNoModal";
 import EditModal from "../components/EditModal";
 import { useNavigation } from "@react-navigation/native";
+import { useAudioPlayer } from "expo-audio";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 export default function WordFocus() {
   const {
@@ -39,6 +41,10 @@ export default function WordFocus() {
     setCitations([...item.info.citations]);
   }, []);
 
+  const player = useAudioPlayer(item.info.pronounce, {
+    downloadFirst: true,
+  });
+
   return (
     <Animated.View
       entering={FadeIn.withInitialValues({
@@ -67,9 +73,26 @@ export default function WordFocus() {
         <Text style={[styles.word, { color: textColor }]}>
           {item.info.word}
         </Text>
-        <Text style={[styles.pof, { color: textColor }]}>
-          {item.info.partOfSpeech}
-        </Text>
+        <View style={styles.secondRow}>
+          <Text style={[styles.pof, { color: textColor }]}>
+            {item.info.partOfSpeech}
+          </Text>
+          {item.info.pronounce && (
+            <Pressable
+              style={styles.audio}
+              onPress={() => {
+                player.seekTo(0);
+                player.play();
+              }}
+            >
+              <MaterialCommunityIcons
+                name="volume-high"
+                size={32}
+                color={textColor}
+              />
+            </Pressable>
+          )}
+        </View>
         <Text style={[styles.definition, { color: textColor }]}>
           {item.info.definition}
         </Text>
@@ -146,10 +169,19 @@ const styles = StyleSheet.create({
   word: {
     fontSize: 48,
   },
+  secondRow: {
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
   pof: {
+    alignSelf: "flex-end",
     fontStyle: "italic",
     fontSize: 15,
     padding: 10,
+  },
+  audio: {
+    paddingRight: 50,
+    alignSelf: "flex-end"
   },
   definition: {
     paddingVertical: 20,
@@ -176,8 +208,11 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     fontSize: 16,
   },
-  title: {},
+  title: {
+    alignSelf: "flex-end",
+  },
   author: {
     paddingLeft: 15,
+    alignSelf: "flex-end",
   },
 });

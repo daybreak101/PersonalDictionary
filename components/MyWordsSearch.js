@@ -9,14 +9,9 @@ export default function MyWordsSearch({ fullSavedWords, setSavedWords }) {
   const [submitted, setSubmitted] = useState(false);
 
   const {
-    gradientColor1,
-    gradientColor2,
-    focusColor,
-    unfocusColor,
+    themeObject,
     textColor,
     backgroundColor,
-    fadeColor1,
-    fadeColor2,
     darkMode,
   } = useTheme();
 
@@ -55,13 +50,13 @@ export default function MyWordsSearch({ fullSavedWords, setSavedWords }) {
           }}
           style={styles.inputPressable}
         >
-          <Ionicons name="chevron-back" size={24} color={darkMode ? focusColor : unfocusColor} />
+          <Ionicons name="chevron-back" size={24} color={darkMode ? themeObject.focusColor : themeObject.unfocusColor} />
         </Pressable>
       ) : (
         <></>
       )}
       <TextInput
-        style={[styles.textInput, {borderColor:  darkMode ? focusColor : unfocusColor, color: textColor}]}
+        style={[styles.textInput, {borderColor:  darkMode ? themeObject.focusColor : themeObject.unfocusColor, color: textColor}]}
         autoCorrect={false}
         autoCapitalize="none"
         placeholder="Search for a word"
@@ -74,7 +69,7 @@ export default function MyWordsSearch({ fullSavedWords, setSavedWords }) {
         style={styles.searchIconContainer}
         onPress={() => handleSubmit(input)}
       >
-        <Foundation name="magnifying-glass" size={30} color={darkMode ? focusColor : unfocusColor} />
+        <Foundation name="magnifying-glass" size={30} color={darkMode ? themeObject.focusColor : themeObject.unfocusColor} />
       </Pressable>
     </View>
   );

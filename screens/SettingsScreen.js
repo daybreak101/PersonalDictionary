@@ -6,6 +6,7 @@ import {
   Button,
   Modal,
   Alert,
+  ScrollView,
 } from "react-native";
 import React, { useState } from "react";
 import YesNoModal from "../components/YesNoModal";
@@ -15,23 +16,14 @@ import DarkModeToggle from "../components/settings/DarkModeToggle";
 import { useTheme } from "../context/ThemeContext";
 import HapticFeedback from "../components/settings/HapticFeedback";
 import ScreenReader from "../components/settings/ScreenReader";
+import RNHapticFeedback from "react-native-haptic-feedback";
 
 export default function SettingsScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDesc, setModalDesc] = useState("");
   const [selectedFunc, setSelectedFunc] = useState(() => {});
 
-  const {
-    gradientColor1,
-    gradientColor2,
-    focusColor,
-    unfocusColor,
-    textColor,
-    backgroundColor,
-    fadeColor1,
-    fadeColor2,
-    darkMode,
-  } = useTheme();
+  const { textColor, backgroundColor, hapticFeedback } = useTheme();
 
   const clearRecentSearches = async () => {
     try {
@@ -50,39 +42,63 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View style={[styles.container, {backgroundColor: backgroundColor}]}>
+    <ScrollView
+      style={[styles.container, { backgroundColor: backgroundColor }]}
+      contentContainerStyle={{ paddingBottom: 50 }}
+    >
       <YesNoModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         desc={modalDesc}
         func={selectedFunc}
       />
-      <Text style={[styles.header, {color: textColor}]}>Settings</Text>
-      <ThemeSelector />
-      <DarkModeToggle />
-      <HapticFeedback />
-      <ScreenReader />
-      <Pressable
-        style={styles.pressable}
-        onPress={() => {
-          setModalDesc("clear recent searches");
-          setModalVisible(true);
-          setSelectedFunc(() => clearRecentSearches);
-        }}
-      >
-        <Text style={[styles.text, {color: textColor}]}>Clear Recent Searches</Text>
-      </Pressable>
-      <Pressable
-        style={styles.pressable}
-        onPress={() => {
-          setModalDesc("clear saved words");
-          setModalVisible(true);
-          setSelectedFunc(() => clearSavedWords);
-        }}
-      >
-        <Text style={[styles.text, {color: textColor}]}>Clear Saved Words</Text>
-      </Pressable>
-    </View>
+      <Text style={[styles.header, { color: textColor }]}>Settings</Text>
+      <View style={styles.group}>
+        <Text style={[styles.groupHeader, { color: textColor }]}>
+          Appearance
+        </Text>
+        <ThemeSelector />
+        <DarkModeToggle />
+      </View>
+      <View style={styles.group}>
+        <Text style={[styles.groupHeader, { color: textColor }]}>Feedback</Text>
+        <HapticFeedback />
+        <ScreenReader />
+      </View>
+      <View style={styles.group}>
+        <Text style={[styles.groupHeader, { color: textColor }]}>Storage</Text>
+        <Pressable
+          style={styles.pressable}
+          onPress={() => {
+            if (hapticFeedback) {
+              RNHapticFeedback.trigger("notificationWarning");
+            }
+            setModalDesc("clear recent searches");
+            setModalVisible(true);
+            setSelectedFunc(() => clearRecentSearches);
+          }}
+        >
+          <Text style={[styles.text, { color: textColor }]}>
+            Clear Recent Searches
+          </Text>
+        </Pressable>
+        <Pressable
+          style={styles.pressable}
+          onPress={() => {
+            if (hapticFeedback) {
+              RNHapticFeedback.trigger("notificationWarning");
+            }
+            setModalDesc("clear saved words");
+            setModalVisible(true);
+            setSelectedFunc(() => clearSavedWords);
+          }}
+        >
+          <Text style={[styles.text, { color: textColor }]}>
+            Clear Saved Words
+          </Text>
+        </Pressable>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -93,6 +109,12 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 30,
+  },
+  group: {
+    paddingVertical: 10,
+  },
+  groupHeader: {
+    padding: 10,
   },
   pressable: {
     width: "100%",

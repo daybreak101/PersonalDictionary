@@ -21,6 +21,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import Notification from "../components/Notification";
 import { NotifProvider, useNotif } from "../context/NotifContext";
 import { useTheme } from "../context/ThemeContext";
+import RNHapticFeedback from "react-native-haptic-feedback";
 
 export default function SearchScreen({ navigation }) {
   //preload hooks
@@ -28,30 +29,34 @@ export default function SearchScreen({ navigation }) {
     MonteCarlo_400Regular,
   });
 
-   const {
-      gradientColor1,
-      gradientColor2,
-      focusColor,
-      unfocusColor,
-      textColor,
-      backgroundColor,
-      fadeColor1,
-      fadeColor2,
-      darkMode
-    } = useTheme();
+  const { themeObject, textColor, backgroundColor, darkMode, hapticFeedback } = useTheme();
 
   //states
   const [input, setInput] = useState("");
   const [wordSearched, setWordSearched] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const { notifVisible } = useNotif()
+  const { notifVisible } = useNotif();
+  const [recentSearches, setRecentSearches] = useState([]);
+
+  const getRecentSearches = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem("recentSearches");
+      const searchArray = jsonValue ? JSON.parse(jsonValue) : [];
+      setRecentSearches(searchArray);
+    } catch (error) {
+      console.log("Error loading saved words:", error);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    getRecentSearches();
+  }, []);
 
   useEffect(() => {
     const backAction = () => {
       if (submitted || isFocused) {
-        // setWordSearched("");
-        // setInput("");
         setSubmitted(false);
         setIsFocused(false);
       } else {
@@ -72,7 +77,44 @@ export default function SearchScreen({ navigation }) {
     return null; // Prevent rendering until fonts are ready
   }
 
-  const handleSubmit = (word) => {
+  const saveRecentSearch = async (key) => {
+    try {
+      const jsonValue = await AsyncStorage.getItem("recentSearches");
+      const array = jsonValue != null ? JSON.parse(jsonValue) : [];
+      const removeExisting = array.filter((item) => item !== key);
+
+      removeExisting.unshift(key);
+      await AsyncStorage.setItem(
+        "recentSearches",
+        JSON.stringify(removeExisting)
+      );
+      setRecentSearches(removeExisting);
+      //setNotifDesc(key + " has been added to your dictionary");
+      //await setRefreshFlag((prev) => !prev);
+      console.log("Recent Search Save successful");
+    } catch (error) {
+      console.log("Error saving recent search:", error);
+    }
+  };
+
+  const deleteRecentSearch = async (key) => {
+    try {
+      const jsonValue = await AsyncStorage.getItem("recentSearches");
+      const array = jsonValue != null ? JSON.parse(jsonValue) : [];
+      const removeExisting = array.filter((item) => item !== key);
+      await AsyncStorage.setItem(
+        "recentSearches",
+        JSON.stringify(removeExisting)
+      );
+      //setNotifDesc(key + " has been added to your dictionary");
+      //await setRefreshFlag((prev) => !prev);
+      console.log("Recent Search Delete successful");
+    } catch (error) {
+      console.log("Error deleting recent search:", error);
+    }
+  };
+
+  const handleSubmit = async (word) => {
     if (word === "") {
       setWordSearched(word);
       setInput(word);
@@ -81,30 +123,46 @@ export default function SearchScreen({ navigation }) {
       setWordSearched(word);
       setInput(word);
       setSubmitted(true);
+      await saveRecentSearch(word);
     }
   };
 
   return (
-      <KeyboardAvoidingView style={styles.page} behavior="padding">
-        <View style={[styles.container, {backgroundColor: backgroundColor}]}>
-          {isFocused || submitted ? <></> : <Logo />}
+    <View style={styles.page} behavior="padding">
+      <View style={[styles.container, { backgroundColor: backgroundColor }]}>
+        {isFocused || submitted ? <></> : <Logo />}
+        <View style={styles.searchBox}>
           <View style={styles.inputView}>
             {isFocused ? (
               <Pressable
                 onPress={() => {
                   setIsFocused(false);
-                  setSubmitted(false)
+                  setSubmitted(false);
                   Keyboard.dismiss();
                 }}
                 style={styles.inputPressable}
               >
-                <Ionicons name="chevron-back" size={24} color={darkMode ? focusColor : unfocusColor} />
+                <Ionicons
+                  name="chevron-back"
+                  size={24}
+                  color={
+                    darkMode ? themeObject.focusColor : themeObject.unfocusColor
+                  }
+                />
               </Pressable>
             ) : (
               <></>
             )}
             <TextInput
-              style={[styles.textInput, {borderColor: darkMode ? focusColor : unfocusColor, color: textColor}]}
+              style={[
+                styles.textInput,
+                {
+                  borderColor: darkMode
+                    ? themeObject.focusColor
+                    : themeObject.unfocusColor,
+                  color: textColor,
+                },
+              ]}
               autoCorrect={false}
               autoCapitalize="none"
               placeholder="Search for a word"
@@ -119,24 +177,60 @@ export default function SearchScreen({ navigation }) {
               style={styles.searchIconContainer}
               onPress={() => handleSubmit(input)}
             >
-              <Foundation name="magnifying-glass" size={30} color={darkMode ? focusColor : unfocusColor} />
+              <Foundation
+                name="magnifying-glass"
+                size={30}
+                color={
+                  darkMode ? themeObject.focusColor : themeObject.unfocusColor
+                }
+              />
             </Pressable>
           </View>
-          {submitted ? (
-            <View style={styles.wordList}>
-              <WordScreen word={wordSearched} />
+          {isFocused && !submitted && (
+            <View style={styles.recentSearches}>
+              {recentSearches.length > 0 && (
+                <>
+                  <Text style={[styles.recentHeader, { color: textColor }]}>
+                    Recent:
+                  </Text>
+                  {recentSearches.map((item) => (
+                    <Pressable
+                      style={styles.recentSearch}
+                      key={item}
+                      onPress={() => {
+                        if (hapticFeedback) {
+                          RNHapticFeedback.trigger("impactHeavy");
+                        }
+                        Keyboard.dismiss()
+                        handleSubmit(item);
+                      }}
+                    >
+                      <Text style={[styles.recentWord, { color: textColor }]}>
+                        {item}
+                      </Text>
+                      <Pressable></Pressable>
+                    </Pressable>
+                  ))}
+                </>
+              )}
             </View>
-          ) : (
-            <WordOfTheDay
-              isFocused={isFocused}
-              navigation={navigation}
-              setWordSearched={setWordSearched}
-              handleSubmit={handleSubmit}
-            />
           )}
         </View>
-        {notifVisible && <Notification />}
-      </KeyboardAvoidingView>
+        {submitted ? (
+          <View style={styles.wordList}>
+            <WordScreen word={wordSearched} />
+          </View>
+        ) : (
+          <WordOfTheDay
+            isFocused={isFocused}
+            navigation={navigation}
+            setWordSearched={setWordSearched}
+            handleSubmit={handleSubmit}
+          />
+        )}
+      </View>
+      {notifVisible && <Notification />}
+    </View>
   );
 }
 
@@ -148,6 +242,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  searchBox: {},
   inputView: {
     position: "relative",
     width: "100%",
@@ -182,5 +277,22 @@ const styles = StyleSheet.create({
     height: 30,
     width: "100%",
     zIndex: 10,
+  },
+  recentSearches: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  recentHeader: {
+    fontSize: 32,
+  },
+  recentSearch: {
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderColor: "gray",
+  },
+  recentWord: {
+    fontSize: 24,
   },
 });

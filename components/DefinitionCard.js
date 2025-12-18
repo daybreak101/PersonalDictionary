@@ -5,7 +5,7 @@ import Animated, {
   useAnimatedStyle,
   interpolateColor,
   SlideInLeft,
-  SlideOutRight, 
+  SlideOutRight,
 } from "react-native-reanimated";
 import LinearGradient from "react-native-linear-gradient";
 import RNHapticFeedback from "react-native-haptic-feedback";
@@ -17,22 +17,13 @@ export default function DefinitionCard({
   deleteItem,
   editItem,
   refresh,
-  index = 1
+  index = 1,
 }) {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDesc, setModalDesc] = useState("");
 
-  const {
-    gradientColor1,
-    gradientColor2,
-    focusColor,
-    unfocusColor,
-    textColor,
-    backgroundColor,
-    fadeColor1,
-    fadeColor2,
-  } = useTheme();
+  const { themeObject, hapticFeedback } = useTheme();
 
   const options = {
     enableVibrateFallback: true,
@@ -48,24 +39,37 @@ export default function DefinitionCard({
       backgroundColor: interpolateColor(
         expanded.value,
         [0, 1],
-        [unfocusColor, focusColor]
+        [themeObject.unfocusColor, themeObject.focusColor]
       ),
     };
   });
 
   return (
-    <Animated.View 
-    entering={SlideInLeft.duration(1000).delay((index % 20) * 50)}
-    exiting={SlideOutRight.duration(400)}
-    style={[styles.card, animatedColorStyle, { opacity: 0.9 }]}>
+    <Animated.View
+      entering={SlideInLeft.duration(1000).delay((index % 20) * 50)}
+      exiting={SlideOutRight.duration(400)}
+      style={[styles.card, animatedColorStyle, { opacity: 0.9 }]}
+    >
       <LinearGradient
-        colors={[gradientColor1, gradientColor2]}
+        colors={[themeObject.gradientColor1, themeObject.gradientColor2]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
-        <Pressable style={styles.wordContainer} onPress={() => navigation.navigate("Word Focus", {item: item, editItem: editItem, deleteItem: deleteItem})}>
+        <Pressable
+          style={styles.wordContainer}
+          onPress={() => {
+            if (hapticFeedback) {
+              RNHapticFeedback.trigger("impactHeavy");
+            }
+            navigation.navigate("Word Focus", {
+              item: item,
+              editItem: editItem,
+              deleteItem: deleteItem,
+            });
+          }}
+        >
           <LinearGradient
-            colors={[fadeColor1, fadeColor2]}
+            colors={[themeObject.fadeColor1, themeObject.fadeColor2]}
             start={{ x: 0, y: 1 }}
             end={{ x: 0.75, y: 0 }}
             locations={[0.1, 1]}
@@ -103,5 +107,4 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 10,
   },
-
 });

@@ -16,15 +16,10 @@ export default function WordScreen({ word }) {
   const lastWord = useRef("");
 
   const {
-    gradientColor1,
-    gradientColor2,
-    focusColor,
-    unfocusColor,
+    themeObject,
     textColor,
     backgroundColor,
-    fadeColor1,
-    fadeColor2,
-    darkMode
+    darkMode,
   } = useTheme();
 
   useEffect(() => {
@@ -41,14 +36,14 @@ export default function WordScreen({ word }) {
         //filter this wacky api
         let apiDef = [...res2.data];
         let word2 = "";
-        let pronounce = "";
-        let partOfSpeech = "";
+        let pronounce = ""
 
         if (apiDef.title === "No Definitions Found") {
           setDefinitions([]);
           return;
         }
 
+        const result = [];
         for (let i of apiDef) {
           word2 = i.word;
           for (let phonetic of i.phonetics) {
@@ -58,25 +53,23 @@ export default function WordScreen({ word }) {
           }
 
           for (let meaning of i.meanings) {
-            partOfSpeech = meaning.partOfSpeech;
+            const partOfSpeech = meaning.partOfSpeech;
             for (let def of meaning.definitions) {
               const definition = def.definition;
               const synonyms = def.synonyms;
               const antonyms = def.antonyms;
-              setDefinitions((prev) => [
-                ...prev,
-                {
-                  word: word2,
-                  pronounce: pronounce,
-                  partOfSpeech: partOfSpeech,
-                  definition: definition,
-                  synonyms: synonyms,
-                  antonyms: antonyms,
-                },
-              ]);
+              result.push({
+                word: word2,
+                pronounce: pronounce,
+                partOfSpeech: partOfSpeech,
+                definition: definition,
+                synonyms: synonyms,
+                antonyms: antonyms,
+              });
             }
           }
         }
+        setDefinitions(result);
         lastWord.current = word;
         setLoading(false);
       } catch (error) {
@@ -91,13 +84,17 @@ export default function WordScreen({ word }) {
   return (
     <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator style={styles.activity} size="large" color={darkMode ? focusColor : unfocusColor}/>
+        <ActivityIndicator
+          style={styles.activity}
+          size="large"
+          color={darkMode ? themeObject.focusColor : themeObject.unfocusColor}
+        />
       ) : (
         <FlatList
           style={styles.wordList}
           data={definitions}
           renderItem={({ item }) => {
-            return <WordCard word={word} definition={item} />;
+            return <WordCard word={word} definition={item} playAudio={(uri) => playAudio(uri)}/>;
           }}
           ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
           ListEmptyComponent={
@@ -108,7 +105,7 @@ export default function WordScreen({ word }) {
                 justifyContent: "center",
               }}
             >
-              <Text style={{color: textColor}}>No items found</Text>
+              <Text style={{ color: textColor }}>No items found</Text>
             </View>
           }
           contentContainerStyle={{

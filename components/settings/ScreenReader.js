@@ -4,15 +4,7 @@ import { useTheme } from "../../context/ThemeContext";
 
 export default function ScreenReader() {
   const {
-    gradientColor1,
-    gradientColor2,
-    focusColor,
-    unfocusColor,
     textColor,
-    backgroundColor,
-    fadeColor1,
-    fadeColor2,
-    darkMode,
   } = useTheme();
 
 

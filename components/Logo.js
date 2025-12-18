@@ -6,15 +6,13 @@ import { useTheme } from "../context/ThemeContext";
 
 export default function Logo() {
   const {
+    themeObject, 
     textColor,
     darkMode, 
-    focusColor,
-    unfocusColor
   } = useTheme();
   return (
     <View style={styles.logoView}>
-      {/* <FontAwesome6 name="readme" size={100} color={darkMode ? focusColor : unfocusColor} /> */}
-      <Fontisto name="coffeescript" size={100} color={darkMode ? focusColor : unfocusColor} />
+      <Fontisto name="coffeescript" size={100} color={darkMode ? themeObject.focusColor : themeObject.unfocusColor} />
       <Text style={[styles.logoText, {color: textColor}]}>PersonalDictionary</Text>
     </View>
   );

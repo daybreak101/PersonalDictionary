@@ -10,20 +10,10 @@ export default function CustomTab({
   navigation,
   themeValue,
 }) {
-  const {
-    gradientColor1,
-    gradientColor2,
-    focusColor,
-    unfocusColor,
-    textColor,
-    backgroundColor,
-    fadeColor1,
-    fadeColor2,
-    moduleColor,
-  } = useTheme();
+  const { themeObject, backgroundColor, hapticFeedback } = useTheme();
   return (
     <LinearGradient
-      colors={[unfocusColor, backgroundColor]}
+      colors={[themeObject.unfocusColor, backgroundColor]}
       start={{ x: 0, y: 1 }}
       end={{ x: 0, y: 0 }}
       locations={[0, 1]}
@@ -41,7 +31,9 @@ export default function CustomTab({
         const isFocused = state.index === index;
 
         const onPress = () => {
-          RNHapticFeedback.trigger("impactHeavy", options);
+          if (hapticFeedback) {
+            RNHapticFeedback.trigger("impactHeavy");
+          }
           const event = navigation.emit({
             type: "tabPress",
             target: route.key,
@@ -72,7 +64,7 @@ export default function CustomTab({
             style={styles.tabItem}
           >
             <LinearGradient
-              colors={[focusColor, gradientColor2]}
+              colors={[themeObject.focusColor, themeObject.gradientColor2]}
               start={{ x: 0, y: 1 }}
               end={{ x: 0, y: 0 }}
               locations={[0, 1]}
