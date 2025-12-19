@@ -71,7 +71,7 @@ export default function MyWordsList() {
     refreshList();
   }, [refreshFlag]);
 
-  const deleteItem = async (key) => {
+  const deleteItem = async (key, refresh) => {
     try {
       const jsonValue = await AsyncStorage.getItem("words");
       const wordsArray = jsonValue != null ? JSON.parse(jsonValue) : [];
@@ -82,7 +82,10 @@ export default function MyWordsList() {
       );
       await AsyncStorage.setItem("words", JSON.stringify(filteredArray));
       console.log("Deletion successful");
-      setRefreshFlag((prev) => !prev);
+      if (refresh) setRefreshFlag((prev) => !prev);
+      else {
+        setSavedWords((prev) => prev.filter((item) => item.timestamp !== key))
+      }
     } catch (error) {
       console.log("Error deleting item:", error);
     }
@@ -137,7 +140,7 @@ export default function MyWordsList() {
               justifyContent: "center",
             }}
           >
-            <Text>No items found</Text>
+            <Text style={{color: textColor}}>No items found</Text>
           </View>
         }
         ListFooterComponent={() =>

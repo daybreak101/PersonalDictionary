@@ -3,9 +3,14 @@ import React from "react";
 import { useTheme } from "../../context/ThemeContext";
 import RNHapticFeedback from "react-native-haptic-feedback";
 
-
 export default function HapticFeedback() {
-  const { textColor, hapticFeedback, setHapticFeedback } = useTheme();
+  const {
+    textColor,
+    hapticFeedback,
+    setHapticFeedback,
+    darkMode,
+    themeObject,
+  } = useTheme();
 
   const toggleSwitch = async () => {
     if (!hapticFeedback) {
@@ -14,7 +19,16 @@ export default function HapticFeedback() {
     setHapticFeedback((prev) => !prev);
   };
   return (
-    <Pressable style={styles.pressable}>
+    <Pressable
+      style={[
+        styles.pressable,
+        {
+          borderColor: darkMode
+            ? themeObject.focusColor
+            : themeObject.unfocusColor,
+        },
+      ]}
+    >
       <Text style={[styles.text, { color: textColor }]}>Haptic Feedback</Text>
       <Switch onValueChange={toggleSwitch} value={hapticFeedback} />
     </Pressable>
@@ -31,7 +45,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 5,
     borderWidth: 2,
-    borderColor: "lightgray",
   },
   text: {
     fontSize: 24,

@@ -5,17 +5,27 @@ import RNHapticFeedback from "react-native-haptic-feedback";
 
 export default function DarkModeToggle() {
   const [isEnabled, setIsEnabled] = useState(false);
-  const { textColor, darkMode, setDarkMode, hapticFeedback } = useTheme();
+  const { textColor, darkMode, setDarkMode, hapticFeedback, themeObject } =
+    useTheme();
 
   const toggleSwitch = async () => {
-    if(hapticFeedback){
-      RNHapticFeedback.trigger("impactHeavy")
+    if (hapticFeedback) {
+      RNHapticFeedback.trigger("impactHeavy");
     }
     setDarkMode((prev) => !prev);
   };
 
   return (
-    <Pressable style={styles.pressable}>
+    <Pressable
+      style={[
+        styles.pressable,
+        {
+          borderColor: darkMode
+            ? themeObject.focusColor
+            : themeObject.unfocusColor,
+        },
+      ]}
+    >
       <Text style={[styles.text, { color: textColor }]}>Dark Mode</Text>
       <Switch onValueChange={toggleSwitch} value={darkMode} />
     </Pressable>
@@ -32,7 +42,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 5,
     borderWidth: 2,
-    borderColor: "lightgray",
   },
 
   text: {

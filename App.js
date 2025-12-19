@@ -11,6 +11,7 @@ import { NotifProvider } from "./context/NotifContext";
 import CustomTab from "./components/CustomTab";
 import { ThemeProvider } from "./context/ThemeContext";
 import { RefreshProvider } from "./context/RefreshContext";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 function TabNavigator() {
   return (
@@ -59,7 +60,8 @@ function TabNavigator() {
 const Tab = createBottomTabNavigator();
 export default function App() {
   return (
-    <RefreshProvider>
+    <GestureHandlerRootView>
+      <RefreshProvider>
         <ThemeProvider>
           <NotifProvider>
             <SafeAreaProvider>
@@ -77,6 +79,7 @@ export default function App() {
             </SafeAreaProvider>
           </NotifProvider>
         </ThemeProvider>
-    </RefreshProvider>
+      </RefreshProvider>
+    </GestureHandlerRootView>
   );
 }

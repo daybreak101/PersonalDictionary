@@ -59,6 +59,9 @@ export default function WordCard({ definition, word }) {
       {definition.antonyms?.length > 0 && (
         <Text>Antonyms: {definition.antonyms.join(", ")}</Text>
       )}
+      {definition.origin && (
+        <Text>Origin: {definition.origin}</Text>
+      )}
       {definition.pronounce && (
         <Pressable
           style={styles.refresh}

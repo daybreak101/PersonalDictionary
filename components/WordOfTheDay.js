@@ -13,13 +13,15 @@ import LinearGradient from "react-native-linear-gradient";
 import data from "../data/randomWord.json";
 import { useTheme } from "../context/ThemeContext";
 import RNHapticFeedback from "react-native-haptic-feedback";
+import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 
 export default function WordOfTheDay({
   isFocused,
   setWordSearched,
   handleSubmit,
 }) {
-  const { themeObject, textColor, backgroundColor, hapticFeedback } = useTheme();
+  const { themeObject, textColor, backgroundColor, hapticFeedback } =
+    useTheme();
 
   const [word, setWord] = useState("");
   useEffect(() => {
@@ -36,44 +38,50 @@ export default function WordOfTheDay({
   };
 
   return (
-    <View style={[styles.wordView]}>
-      <LinearGradient
-        colors={[
-          themeObject.gradientColor2,
-          themeObject.gradientColor2,
-          themeObject.unfocusColor,
-        ]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        locations={[0, 0.6, 1]}
-        style={[
-          {
-            display: isFocused ? "none" : "flex",
-            shadowColor: themeObject.gradientColor2,
-            borderColor: themeObject.focusColor,
-          },
-          styles.wordBox,
-        ]}
+    <Animated.View style={[styles.wordView]}>
+      <ReanimatedSwipeable
+        containerStyle={{ flex: 1 }}
+        childrenContainerStyle={{ flex: 1 }}
       >
-        <Pressable
-          style={styles.pressable}
-          onPress={() => {
-            if (hapticFeedback) {
-              RNHapticFeedback.trigger("impactHeavy");
-            }
-            handleSubmit(word);
-          }}
+        <LinearGradient
+          colors={[
+            themeObject.gradientColor2,
+            themeObject.gradientColor2,
+            themeObject.unfocusColor,
+          ]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          locations={[0, 0.6, 1]}
+          style={[
+            {
+              flex: 1,
+              display: isFocused ? "none" : "flex",
+              shadowColor: themeObject.gradientColor2,
+              borderColor: themeObject.focusColor,
+            },
+            styles.wordBox,
+          ]}
         >
-          <Text style={[styles.title, { color: textColor }]}>
-            Word of the Day
-          </Text>
-          <Text style={[styles.word, { color: textColor }]}>{word}</Text>
-          <Pressable style={styles.refresh} onPress={() => getWord()}>
-            <FontAwesome name="refresh" size={24} color="black" />
+          <Pressable
+            style={styles.pressable}
+            onPress={() => {
+              if (hapticFeedback) {
+                RNHapticFeedback.trigger("impactHeavy");
+              }
+              handleSubmit(word);
+            }}
+          >
+            <Text style={[styles.title, { color: textColor }]}>
+              Word of the Day
+            </Text>
+            <Text style={[styles.word, { color: textColor }]}>{word}</Text>
+            <Pressable style={styles.refresh} onPress={() => getWord()}>
+              <FontAwesome name="refresh" size={24} color="black" />
+            </Pressable>
           </Pressable>
-        </Pressable>
-      </LinearGradient>
-    </View>
+        </LinearGradient>
+      </ReanimatedSwipeable>
+    </Animated.View>
   );
 }
 

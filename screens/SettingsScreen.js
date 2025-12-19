@@ -17,17 +17,20 @@ import { useTheme } from "../context/ThemeContext";
 import HapticFeedback from "../components/settings/HapticFeedback";
 import ScreenReader from "../components/settings/ScreenReader";
 import RNHapticFeedback from "react-native-haptic-feedback";
+import { useRefresh } from "../context/RefreshContext";
 
 export default function SettingsScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDesc, setModalDesc] = useState("");
   const [selectedFunc, setSelectedFunc] = useState(() => {});
 
-  const { textColor, backgroundColor, hapticFeedback } = useTheme();
+  const { textColor, backgroundColor, hapticFeedback, darkMode, themeObject } = useTheme();
+  const { setRefreshFlag } = useRefresh()
 
   const clearRecentSearches = async () => {
     try {
       await AsyncStorage.removeItem("recentSearches");
+      setRefreshFlag((prev) => !prev)
     } catch (error) {
       console.log("Error deleting recent searches");
     }
@@ -68,7 +71,14 @@ export default function SettingsScreen() {
       <View style={styles.group}>
         <Text style={[styles.groupHeader, { color: textColor }]}>Storage</Text>
         <Pressable
-          style={styles.pressable}
+          style={[
+            styles.pressable,
+            {
+              borderColor: darkMode
+                ? themeObject.focusColor
+                : themeObject.unfocusColor,
+            },
+          ]}
           onPress={() => {
             if (hapticFeedback) {
               RNHapticFeedback.trigger("notificationWarning");
@@ -83,7 +93,14 @@ export default function SettingsScreen() {
           </Text>
         </Pressable>
         <Pressable
-          style={styles.pressable}
+          style={[
+            styles.pressable,
+            {
+              borderColor: darkMode
+                ? themeObject.focusColor
+                : themeObject.unfocusColor,
+            },
+          ]}
           onPress={() => {
             if (hapticFeedback) {
               RNHapticFeedback.trigger("notificationWarning");
@@ -122,7 +139,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 5,
     borderWidth: 2,
-    borderColor: "lightgray",
   },
 
   text: {

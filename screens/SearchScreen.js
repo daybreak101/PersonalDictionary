@@ -15,13 +15,13 @@ import Foundation from "@expo/vector-icons/Foundation";
 import WordOfTheDay from "../components/WordOfTheDay";
 import Logo from "../components/Logo";
 import WordScreen from "./WordScreen";
-import LinearGradient from "react-native-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Notification from "../components/Notification";
 import { NotifProvider, useNotif } from "../context/NotifContext";
 import { useTheme } from "../context/ThemeContext";
-import RNHapticFeedback from "react-native-haptic-feedback";
+import RecentSearches from "../components/RecentSearches";
+import { useRefresh } from "../context/RefreshContext";
 
 export default function SearchScreen({ navigation }) {
   //preload hooks
@@ -29,7 +29,9 @@ export default function SearchScreen({ navigation }) {
     MonteCarlo_400Regular,
   });
 
-  const { themeObject, textColor, backgroundColor, darkMode, hapticFeedback } = useTheme();
+  const { themeObject, textColor, backgroundColor, darkMode, hapticFeedback } =
+    useTheme();
+  const { refreshFlag } = useRefresh();
 
   //states
   const [input, setInput] = useState("");
@@ -50,9 +52,29 @@ export default function SearchScreen({ navigation }) {
     }
   };
 
+  const saveRecentSearch = async (key) => {
+    try {
+      const jsonValue = await AsyncStorage.getItem("recentSearches");
+      const array = jsonValue != null ? JSON.parse(jsonValue) : [];
+      const removeExisting = array.filter((item) => item !== key);
+
+      removeExisting.unshift(key);
+      await AsyncStorage.setItem(
+        "recentSearches",
+        JSON.stringify(removeExisting)
+      );
+      setRecentSearches(removeExisting);
+      //setNotifDesc(key + " has been added to your dictionary");
+      //await setRefreshFlag((prev) => !prev);
+      console.log("Recent Search Save successful");
+    } catch (error) {
+      console.log("Error saving recent search:", error);
+    }
+  };
+
   useEffect(() => {
     getRecentSearches();
-  }, []);
+  }, [refreshFlag]);
 
   useEffect(() => {
     const backAction = () => {
@@ -76,43 +98,6 @@ export default function SearchScreen({ navigation }) {
   if (!fontsLoaded) {
     return null; // Prevent rendering until fonts are ready
   }
-
-  const saveRecentSearch = async (key) => {
-    try {
-      const jsonValue = await AsyncStorage.getItem("recentSearches");
-      const array = jsonValue != null ? JSON.parse(jsonValue) : [];
-      const removeExisting = array.filter((item) => item !== key);
-
-      removeExisting.unshift(key);
-      await AsyncStorage.setItem(
-        "recentSearches",
-        JSON.stringify(removeExisting)
-      );
-      setRecentSearches(removeExisting);
-      //setNotifDesc(key + " has been added to your dictionary");
-      //await setRefreshFlag((prev) => !prev);
-      console.log("Recent Search Save successful");
-    } catch (error) {
-      console.log("Error saving recent search:", error);
-    }
-  };
-
-  const deleteRecentSearch = async (key) => {
-    try {
-      const jsonValue = await AsyncStorage.getItem("recentSearches");
-      const array = jsonValue != null ? JSON.parse(jsonValue) : [];
-      const removeExisting = array.filter((item) => item !== key);
-      await AsyncStorage.setItem(
-        "recentSearches",
-        JSON.stringify(removeExisting)
-      );
-      //setNotifDesc(key + " has been added to your dictionary");
-      //await setRefreshFlag((prev) => !prev);
-      console.log("Recent Search Delete successful");
-    } catch (error) {
-      console.log("Error deleting recent search:", error);
-    }
-  };
 
   const handleSubmit = async (word) => {
     if (word === "") {
@@ -187,33 +172,11 @@ export default function SearchScreen({ navigation }) {
             </Pressable>
           </View>
           {isFocused && !submitted && (
-            <View style={styles.recentSearches}>
-              {recentSearches.length > 0 && (
-                <>
-                  <Text style={[styles.recentHeader, { color: textColor }]}>
-                    Recent:
-                  </Text>
-                  {recentSearches.map((item) => (
-                    <Pressable
-                      style={styles.recentSearch}
-                      key={item}
-                      onPress={() => {
-                        if (hapticFeedback) {
-                          RNHapticFeedback.trigger("impactHeavy");
-                        }
-                        Keyboard.dismiss()
-                        handleSubmit(item);
-                      }}
-                    >
-                      <Text style={[styles.recentWord, { color: textColor }]}>
-                        {item}
-                      </Text>
-                      <Pressable></Pressable>
-                    </Pressable>
-                  ))}
-                </>
-              )}
-            </View>
+            <RecentSearches
+              recentSearches={recentSearches}
+              setRecentSearches={setRecentSearches}
+              handleSubmit={handleSubmit}
+            />
           )}
         </View>
         {submitted ? (
@@ -277,22 +240,5 @@ const styles = StyleSheet.create({
     height: 30,
     width: "100%",
     zIndex: 10,
-  },
-  recentSearches: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  recentHeader: {
-    fontSize: 32,
-  },
-  recentSearch: {
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderColor: "gray",
-  },
-  recentWord: {
-    fontSize: 24,
   },
 });

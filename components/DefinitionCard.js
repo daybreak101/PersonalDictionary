@@ -11,6 +11,8 @@ import LinearGradient from "react-native-linear-gradient";
 import RNHapticFeedback from "react-native-haptic-feedback";
 import { useTheme } from "../context/ThemeContext";
 import { useNavigation } from "@react-navigation/native";
+import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
+import Entypo from "@expo/vector-icons/Entypo";
 
 export default function DefinitionCard({
   item,
@@ -23,7 +25,7 @@ export default function DefinitionCard({
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDesc, setModalDesc] = useState("");
 
-  const { themeObject, hapticFeedback } = useTheme();
+  const { themeObject, hapticFeedback, textColor } = useTheme();
 
   const options = {
     enableVibrateFallback: true,
@@ -44,6 +46,31 @@ export default function DefinitionCard({
     };
   });
 
+  const renderRightActions = () => (
+    <View
+      style={{
+        flex: 1,
+        maxWidth: 100,
+        minWidth: 0,
+        justifyContent: "center",
+        backgroundColor: "red",
+        borderRadius: 5,
+      }}
+    >
+      <Pressable
+        style={{
+          padding: 25,
+          justifyContent: "center",
+          borderRadius: 25,
+          alignSelf: "center",
+        }}
+        onPress={() => deleteItem(item.timestamp, false)}
+      >
+        <Entypo name="trash" size={32} color="white" />
+      </Pressable>
+    </View>
+  );
+
   return (
     <Animated.View
       entering={SlideInLeft.duration(1000).delay((index % 20) * 50)}
@@ -51,33 +78,41 @@ export default function DefinitionCard({
       style={[styles.card, animatedColorStyle, { opacity: 0.9 }]}
     >
       <LinearGradient
+        style={{ borderRadius: 10 }}
         colors={[themeObject.gradientColor1, themeObject.gradientColor2]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
-        <Pressable
-          style={styles.wordContainer}
-          onPress={() => {
-            if (hapticFeedback) {
-              RNHapticFeedback.trigger("impactHeavy");
-            }
-            navigation.navigate("Word Focus", {
-              item: item,
-              editItem: editItem,
-              deleteItem: deleteItem,
-            });
-          }}
+        <ReanimatedSwipeable
+          containerStyle={[{ borderWidth: 0 }]}
+          childrenContainerStyle={{ flex: 1 }}
+          renderRightActions={renderRightActions}
+          overshootRight={false}
         >
-          <LinearGradient
-            colors={[themeObject.fadeColor1, themeObject.fadeColor2]}
-            start={{ x: 0, y: 1 }}
-            end={{ x: 0.75, y: 0 }}
-            locations={[0.1, 1]}
-            style={{ borderRadius: 25, width: "90%" }}
+          <Pressable
+            style={styles.wordContainer}
+            onPress={() => {
+              if (hapticFeedback) {
+                RNHapticFeedback.trigger("impactHeavy");
+              }
+              navigation.navigate("Word Focus", {
+                item: item,
+                editItem: editItem,
+                deleteItem: deleteItem,
+              });
+            }}
           >
-            <Text style={styles.word}>{item.word}</Text>
-          </LinearGradient>
-        </Pressable>
+            <LinearGradient
+              colors={[themeObject.fadeColor1, themeObject.fadeColor2]}
+              start={{ x: 0, y: 1 }}
+              end={{ x: 0.75, y: 0 }}
+              locations={[0.1, 1]}
+              style={{ borderRadius: 25, width: "90%" }}
+            >
+              <Text style={styles.word}>{item.word}</Text>
+            </LinearGradient>
+          </Pressable>
+        </ReanimatedSwipeable>
       </LinearGradient>
     </Animated.View>
   );

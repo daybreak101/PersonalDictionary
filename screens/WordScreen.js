@@ -46,6 +46,8 @@ export default function WordScreen({ word }) {
         const result = [];
         for (let i of apiDef) {
           word2 = i.word;
+          const origin = i.origin
+          console.log(origin)
           for (let phonetic of i.phonetics) {
             if (phonetic.audio.endsWith("-us.mp3")) {
               pronounce = phonetic.audio;
@@ -65,6 +67,7 @@ export default function WordScreen({ word }) {
                 definition: definition,
                 synonyms: synonyms,
                 antonyms: antonyms,
+                origin: origin
               });
             }
           }

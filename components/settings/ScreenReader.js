@@ -3,14 +3,20 @@ import React from "react";
 import { useTheme } from "../../context/ThemeContext";
 
 export default function ScreenReader() {
-  const {
-    textColor,
-  } = useTheme();
-
+  const { textColor, themeObject, darkMode } = useTheme();
 
   return (
-    <Pressable style={styles.pressable}>
-      <Text style={[styles.text, {color: textColor}]}>Screen Reader</Text>
+    <Pressable
+      style={[
+        styles.pressable,
+        {
+          borderColor: darkMode
+            ? themeObject.focusColor
+            : themeObject.unfocusColor,
+        },
+      ]}
+    >
+      <Text style={[styles.text, { color: textColor }]}>Screen Reader</Text>
     </Pressable>
   );
 }
@@ -22,7 +28,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 5,
     borderWidth: 2,
-    borderColor: "lightgray",
   },
   text: {
     fontSize: 24,

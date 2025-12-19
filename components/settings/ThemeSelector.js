@@ -21,6 +21,7 @@ export default function ThemeSelector() {
     setThemeValue,
     textColor,
     hapticFeedback,
+    darkMode
   } = useTheme();
 
   const [contentHeight, setContentHeight] = useState(0);
@@ -63,7 +64,17 @@ export default function ThemeSelector() {
 
   return (
     <>
-      <Pressable style={styles.pressable} onPress={() => toggleExpand()}>
+      <Pressable
+        style={[
+          styles.pressable,
+          {
+            borderColor: darkMode
+              ? themeObject.focusColor
+              : themeObject.unfocusColor,
+          },
+        ]}
+        onPress={() => toggleExpand()}
+      >
         <Text style={[styles.text, { color: textColor }]}>Theme</Text>
         <View style={styles.selectedTheme}>
           <Text style={[styles.selectedText, { color: textColor }]}>
@@ -165,7 +176,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 5,
     borderWidth: 2,
-    borderColor: "lightgray",
   },
   text: {
     fontSize: 24,

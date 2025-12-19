@@ -33,7 +33,7 @@ export default function WordFocus() {
   const [citations, setCitations] = useState([]);
 
   const deleteThis = async () => {
-    await deleteItem(item.timestamp);
+    await deleteItem(item.timestamp, true);
     navigation.navigate("My Words List");
   };
 
@@ -70,11 +70,11 @@ export default function WordFocus() {
       />
 
       <ScrollView style={styles.content}>
-        <Text style={[styles.word, { color: textColor }]}>
+        <Text selectable={true} style={[styles.word, { color: textColor }]}>
           {item.info.word}
         </Text>
         <View style={styles.secondRow}>
-          <Text style={[styles.pof, { color: textColor }]}>
+          <Text selectable={true} style={[styles.pof, { color: textColor }]}>
             {item.info.partOfSpeech}
           </Text>
           {item.info.pronounce && (
@@ -93,38 +93,60 @@ export default function WordFocus() {
             </Pressable>
           )}
         </View>
-        <Text style={[styles.definition, { color: textColor }]}>
+        {item.origin && (
+          <Text selectable={true} style={styles.definition}>
+            {item.info.origin}
+          </Text>
+        )}
+        <Text
+          selectable={true}
+          style={[styles.definition, { color: textColor }]}
+        >
           {item.info.definition}
         </Text>
         {item.info.synonyms.length > 0 && (
-          <Text style={[styles.similars, { color: textColor }]}>
+          <Text
+            selectable={true}
+            style={[styles.similars, { color: textColor }]}
+          >
             Synonyms: {item.info.synonyms.join(", ")}
           </Text>
         )}
         {item.info.antonyms.length > 0 && (
-          <Text style={[styles.similars, { color: textColor }]}>
+          <Text
+            selectable={true}
+            style={[styles.similars, { color: textColor }]}
+          >
             Antonyms: {item.info.antonyms.join(", ")}
           </Text>
         )}
 
-        {item.info.citations.length > 0 && (
+        {citations.length > 0 && (
           <Text style={[styles.definition, { color: textColor }]}>Quotes:</Text>
         )}
         {citations?.length > 0 &&
           citations.map((i, index) => (
             <View key={index} style={styles.citation}>
-              <Text style={[styles.quote, { color: textColor }]}>
+              <Text
+                selectable={true}
+                style={[styles.quote, { color: textColor }]}
+              >
                 "{i.quote}"
               </Text>
 
               {i.sourceTitle !== "" && (
-                <Text style={[styles.title, { color: textColor }]}>
+                <Text
+                  selectable={true}
+                  style={[styles.title, { color: textColor }]}
+                >
                   — {i.sourceTitle}
                 </Text>
               )}
               {i.sourceAuthor !== "" && (
-                <Text style={[styles.author, { color: textColor }]}>
-                  {" "}
+                <Text
+                  selectable={true}
+                  style={[styles.author, { color: textColor }]}
+                >
                   by {i.sourceAuthor}
                 </Text>
               )}
@@ -171,7 +193,7 @@ const styles = StyleSheet.create({
   },
   secondRow: {
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   pof: {
     alignSelf: "flex-end",
@@ -181,7 +203,7 @@ const styles = StyleSheet.create({
   },
   audio: {
     paddingRight: 50,
-    alignSelf: "flex-end"
+    alignSelf: "flex-end",
   },
   definition: {
     paddingVertical: 20,
