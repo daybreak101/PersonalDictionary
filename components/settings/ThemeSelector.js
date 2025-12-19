@@ -21,7 +21,7 @@ export default function ThemeSelector() {
     setThemeValue,
     textColor,
     hapticFeedback,
-    darkMode
+    darkMode,
   } = useTheme();
 
   const [contentHeight, setContentHeight] = useState(0);
@@ -71,6 +71,7 @@ export default function ThemeSelector() {
             borderColor: darkMode
               ? themeObject.focusColor
               : themeObject.unfocusColor,
+            backgroundColor: themeObject.gradientColor2,
           },
         ]}
         onPress={() => toggleExpand()}

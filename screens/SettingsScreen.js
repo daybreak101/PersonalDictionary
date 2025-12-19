@@ -24,13 +24,20 @@ export default function SettingsScreen() {
   const [modalDesc, setModalDesc] = useState("");
   const [selectedFunc, setSelectedFunc] = useState(() => {});
 
-  const { textColor, backgroundColor, hapticFeedback, darkMode, themeObject } = useTheme();
-  const { setRefreshFlag } = useRefresh()
+  const {
+    textColor,
+    backgroundColor,
+    hapticFeedback,
+    darkMode,
+    themeObject,
+    themeValue,
+  } = useTheme();
+  const { setRefreshFlag } = useRefresh();
 
   const clearRecentSearches = async () => {
     try {
       await AsyncStorage.removeItem("recentSearches");
-      setRefreshFlag((prev) => !prev)
+      setRefreshFlag((prev) => !prev);
     } catch (error) {
       console.log("Error deleting recent searches");
     }
@@ -77,6 +84,7 @@ export default function SettingsScreen() {
               borderColor: darkMode
                 ? themeObject.focusColor
                 : themeObject.unfocusColor,
+              backgroundColor: themeObject.unfocusColor,
             },
           ]}
           onPress={() => {
@@ -88,7 +96,17 @@ export default function SettingsScreen() {
             setSelectedFunc(() => clearRecentSearches);
           }}
         >
-          <Text style={[styles.text, { color: textColor }]}>
+          <Text
+            style={[
+              styles.text,
+              {
+                color:
+                  themeValue === "Prism" || themeValue === "Soft Pearl"
+                    ? "black"
+                    : "white",
+              },
+            ]}
+          >
             Clear Recent Searches
           </Text>
         </Pressable>
@@ -99,6 +117,7 @@ export default function SettingsScreen() {
               borderColor: darkMode
                 ? themeObject.focusColor
                 : themeObject.unfocusColor,
+              backgroundColor: themeObject.unfocusColor,
             },
           ]}
           onPress={() => {
@@ -110,7 +129,17 @@ export default function SettingsScreen() {
             setSelectedFunc(() => clearSavedWords);
           }}
         >
-          <Text style={[styles.text, { color: textColor }]}>
+          <Text
+            style={[
+              styles.text,
+              {
+                color:
+                  themeValue === "Prism" || themeValue === "Soft Pearl"
+                    ? "black"
+                    : "white",
+              },
+            ]}
+          >
             Clear Saved Words
           </Text>
         </Pressable>
@@ -139,6 +168,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 5,
     borderWidth: 2,
+    marginBottom: 2,
   },
 
   text: {

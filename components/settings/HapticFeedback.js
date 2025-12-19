@@ -26,11 +26,15 @@ export default function HapticFeedback() {
           borderColor: darkMode
             ? themeObject.focusColor
             : themeObject.unfocusColor,
+            backgroundColor: themeObject.gradientColor2
         },
       ]}
     >
       <Text style={[styles.text, { color: textColor }]}>Haptic Feedback</Text>
-      <Switch onValueChange={toggleSwitch} value={hapticFeedback} />
+      <Switch onValueChange={toggleSwitch} value={hapticFeedback}         thumbColor={
+          hapticFeedback ? themeObject.focusColor : themeObject.unfocusColor
+        }
+      />
     </Pressable>
   );
 }
@@ -45,6 +49,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 5,
     borderWidth: 2,
+    marginBottom: 2
   },
   text: {
     fontSize: 24,

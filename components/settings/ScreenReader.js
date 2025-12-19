@@ -12,7 +12,7 @@ export default function ScreenReader() {
         {
           borderColor: darkMode
             ? themeObject.focusColor
-            : themeObject.unfocusColor,
+            : themeObject.unfocusColor,   backgroundColor: themeObject.gradientColor2
         },
       ]}
     >

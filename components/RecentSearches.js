@@ -19,7 +19,7 @@ export default function RecentSearches({
   setRecentSearches,
   handleSubmit,
 }) {
-  const { themeObject, textColor, hapticFeedback, themeValue } = useTheme();
+  const { themeObject, textColor, hapticFeedback, themeValue, darkMode } = useTheme();
 
   const deleteRecentSearch = async (key) => {
     try {
@@ -95,13 +95,11 @@ export default function RecentSearches({
                       <Text
                         style={[
                           styles.recentWord,
-                          // { color: textColor }]}>
                           {
                             color:
-                              themeValue === "Soft Pearl" ||
-                              themeValue === "Prism"
-                                ? "black"
-                                : textColor,
+                              themeValue === "Prism" ||
+                              themeValue === "Soft Pearl"
+                            ? "black" : "white"
                           },
                         ]}
                       >

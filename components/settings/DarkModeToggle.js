@@ -22,12 +22,20 @@ export default function DarkModeToggle() {
         {
           borderColor: darkMode
             ? themeObject.focusColor
-            : themeObject.unfocusColor,
+            : themeObject.unfocusColor,   backgroundColor: themeObject.gradientColor2
         },
       ]}
     >
       <Text style={[styles.text, { color: textColor }]}>Dark Mode</Text>
-      <Switch onValueChange={toggleSwitch} value={darkMode} />
+      <Switch
+        onValueChange={toggleSwitch}
+        value={darkMode}
+        thumbColor={
+          darkMode ? themeObject.focusColor : themeObject.unfocusColor
+        }
+        trackColor={textColor}
+        borderColor={textColor}
+      />
     </Pressable>
   );
 }
