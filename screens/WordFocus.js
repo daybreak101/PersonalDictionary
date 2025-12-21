@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useTheme } from "../context/ThemeContext";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, { FadeIn, SlideInDown, SlideInLeft, SlideInRight, SlideInUp } from "react-native-reanimated";
 import { useRoute } from "@react-navigation/native";
 import Entypo from "@expo/vector-icons/Entypo";
 import YesNoModal from "../components/YesNoModal";
@@ -49,7 +49,7 @@ export default function WordFocus() {
     <Animated.View
       entering={FadeIn.withInitialValues({
         backgroundColor: "black",
-      }).duration(1000)}
+      }).duration(600)}
       style={[styles.container, { backgroundColor: backgroundColor }]}
     >
       <YesNoModal
@@ -68,11 +68,14 @@ export default function WordFocus() {
           refresh();
         }}
       />
-
-      <ScrollView style={styles.content}>
-        <Text selectable={true} style={[styles.word, { color: textColor }]}>
-          {item.info.word}
-        </Text>
+      <Animated.Text
+        entering={SlideInLeft.duration(100).delay(300)}
+        selectable={true}
+        style={[styles.word, { color: textColor }]}
+      >
+        {item.info.word}
+      </Animated.Text>
+      <Animated.ScrollView style={styles.content} entering={SlideInRight.duration(300).delay(600)}>
         <View style={styles.secondRow}>
           <Text selectable={true} style={[styles.pof, { color: textColor }]}>
             {item.info.partOfSpeech}
@@ -152,8 +155,8 @@ export default function WordFocus() {
               )}
             </View>
           ))}
-      </ScrollView>
-      <View style={styles.actions}>
+      </Animated.ScrollView>
+      <Animated.View style={styles.actions} entering={SlideInDown.duration(800).delay(500)}>
         <Pressable
           style={styles.pressable}
           onPress={() => {
@@ -175,7 +178,7 @@ export default function WordFocus() {
           <Text style={{ color: textColor }}>Delete</Text>
           <Entypo name="trash" size={24} color={textColor} />
         </Pressable>
-      </View>
+      </Animated.View>
     </Animated.View>
   );
 }
@@ -190,6 +193,7 @@ const styles = StyleSheet.create({
   },
   word: {
     fontSize: 48,
+    padding: 20
   },
   secondRow: {
     flexDirection: "row",

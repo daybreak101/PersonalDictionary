@@ -24,9 +24,9 @@ const ThemeProvider = ({ children }) => {
       case "Default":
         setThemeObject({
           gradientColor1: "#ffffffba",
-          gradientColor2: "#ffffffa9",
+          gradientColor2: "#edededa9",
           unfocusColor: "#000000ff",
-          focusColor: "#ffffffff",
+          focusColor: "#9f9f9fff",
           fadeColor1: "#ffffffff",
           fadeColor2: "#ffffff01",
         });
@@ -74,7 +74,7 @@ const ThemeProvider = ({ children }) => {
       case "Monochrome":
         setThemeObject({
           gradientColor1: "#9ba8ae72",
-          gradientColor2: "#4950540c",
+          gradientColor2: "#a9b8c2ff",
           unfocusColor: "#707a7eff",
           focusColor: "#bccad0",
           fadeColor1: "#e3e8ea",

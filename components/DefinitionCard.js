@@ -6,6 +6,7 @@ import Animated, {
   interpolateColor,
   SlideInLeft,
   SlideOutRight,
+  withTiming,
 } from "react-native-reanimated";
 import LinearGradient from "react-native-linear-gradient";
 import RNHapticFeedback from "react-native-haptic-feedback";
@@ -46,48 +47,55 @@ export default function DefinitionCard({
     };
   });
 
-  const renderRightActions = () => (
-    <View
-      style={{
-        flex: 1,
-        maxWidth: 100,
-        minWidth: 0,
-        justifyContent: "center",
-        backgroundColor: "red",
-        borderRadius: 5,
-      }}
-    >
-      <Pressable
-        style={{
-          padding: 25,
-          justifyContent: "center",
-          borderRadius: 25,
-          alignSelf: "center",
-        }}
-        onPress={() => deleteItem(item.timestamp, false)}
+  const renderRightActions = () => {
+    const animatedStyle = useAnimatedStyle(() => ({
+      minWidth: withTiming(100, { duration: 200 }),
+    }));
+
+    return (
+      <Animated.View
+        style={[
+          {
+            justifyContent: "center",
+            backgroundColor: "red",
+            borderTopRightRadius: 5,
+            borderBottomRightRadius: 5,
+          },
+        ]}
       >
-        <Entypo name="trash" size={32} color="white" />
-      </Pressable>
-    </View>
-  );
+        <Pressable
+          style={{
+            flex: 1,
+            padding: 25,
+            justifyContent: "center",
+            borderRadius: 25,
+            alignSelf: "center",
+          }}
+          onPress={() => deleteItem(item.timestamp, false)}
+        >
+          <Entypo name="trash" size={32} color="white" />
+        </Pressable>
+      </Animated.View>
+    );
+  };
 
   return (
-    <Animated.View
-      entering={SlideInLeft.duration(1000).delay((index % 20) * 50)}
-      exiting={SlideOutRight.duration(400)}
-      style={[styles.card, animatedColorStyle, { opacity: 0.9 }]}
+    <ReanimatedSwipeable
+      containerStyle={[{ borderWidth: 0 }]}
+      childrenContainerStyle={{ flex: 1 }}
+      renderRightActions={renderRightActions}
+      overshootRight={false}
     >
-      <LinearGradient
-        style={{ borderRadius: 10 }}
-        colors={[themeObject.gradientColor1, themeObject.gradientColor2]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+      <Animated.View
+        entering={SlideInLeft.duration(1000).delay((index % 20) * 50)}
+        exiting={SlideOutRight.duration(400)}
+        style={[styles.card, animatedColorStyle, { opacity: 0.9 }]}
       >
-        <ReanimatedSwipeable
-          containerStyle={[{ borderWidth: 0 }]}
-          childrenContainerStyle={{ flex: 1 }}
-          renderRightActions={renderRightActions}
-          overshootRight={false}
+        <LinearGradient
+          style={{ borderBottomLeftRadius: 8, borderTopLeftRadius: 8 }}
+          colors={[themeObject.gradientColor1, themeObject.gradientColor2]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
         >
           <Pressable
             style={styles.wordContainer}
@@ -112,19 +120,18 @@ export default function DefinitionCard({
               <Text style={styles.word}>{item.word}</Text>
             </LinearGradient>
           </Pressable>
-        </ReanimatedSwipeable>
-      </LinearGradient>
-    </Animated.View>
+        </LinearGradient>
+      </Animated.View>
+    </ReanimatedSwipeable>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    borderWidth: 2,
-    borderRadius: 10,
-    borderColor: "#c8c8c8ff",
     elevation: 15,
     shadowColor: "black",
+    borderBottomLeftRadius: 8,
+    borderTopLeftRadius: 8,
   },
   word: {
     fontSize: 30,

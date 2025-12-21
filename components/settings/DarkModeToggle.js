@@ -5,7 +5,7 @@ import RNHapticFeedback from "react-native-haptic-feedback";
 
 export default function DarkModeToggle() {
   const [isEnabled, setIsEnabled] = useState(false);
-  const { textColor, darkMode, setDarkMode, hapticFeedback, themeObject } =
+  const { textColor, darkMode, setDarkMode, hapticFeedback, themeObject, backgroundColor } =
     useTheme();
 
   const toggleSwitch = async () => {
@@ -20,9 +20,10 @@ export default function DarkModeToggle() {
       style={[
         styles.pressable,
         {
-          borderColor: darkMode
-            ? themeObject.focusColor
-            : themeObject.unfocusColor,   backgroundColor: themeObject.gradientColor2
+          // borderColor: darkMode
+          //   ? themeObject.focusColor
+          //   : themeObject.unfocusColor,
+          backgroundColor: themeObject.gradientColor2,
         },
       ]}
     >
@@ -33,7 +34,10 @@ export default function DarkModeToggle() {
         thumbColor={
           darkMode ? themeObject.focusColor : themeObject.unfocusColor
         }
-        trackColor={textColor}
+        trackColor={{
+          false: textColor,
+          true: textColor,
+        }}
         borderColor={textColor}
       />
     </Pressable>
@@ -49,7 +53,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     borderRadius: 5,
-    borderWidth: 2,
+    // borderWidth: 2,
   },
 
   text: {

@@ -1,19 +1,34 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import Constants from "expo-constants";
+import React, { useEffect, useState, useRef } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Animated, {
   useSharedValue,
   withTiming,
   useAnimatedStyle,
   Easing,
+  withSpring,
+  interpolate,
+  withDecay,
 } from "react-native-reanimated";
 import LinearGradient from "react-native-linear-gradient";
 import data from "../data/randomWord.json";
 import { useTheme } from "../context/ThemeContext";
 import RNHapticFeedback from "react-native-haptic-feedback";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
+import {
+  Gesture,
+  GestureDetector,
+  Directions,
+  Pan,
+} from "react-native-gesture-handler";
+import {
+  runOnRuntime,
+  runOnUI,
+  runOnUIAsync,
+  scheduleOnRN,
+  scheduleOnUI,
+  runOnJS,
+} from "react-native-worklets";
 
 export default function WordOfTheDay({
   isFocused,
@@ -37,12 +52,29 @@ export default function WordOfTheDay({
     }
   };
 
+  const spinValue = useSharedValue(0);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const rotation = interpolate(spinValue.value, [-25, 0, 25], [-15, 0, 180]);
+
+    return {
+      transform: [{ perspective: 1000 }, { rotateY: `${rotation}deg` }],
+    };
+  });
+
+  const swipeGesture = Gesture.Pan()
+    .onStart((e) => {})
+    .onUpdate((e) => {
+      spinValue.value = e.translationX / 10;
+    })
+    .onEnd((e) => {
+      if (e.translationX > 100) runOnJS(getWord)();
+      spinValue.value = 0;
+    });
+
   return (
-    <Animated.View style={[styles.wordView]}>
-      <ReanimatedSwipeable
-        containerStyle={{ flex: 1 }}
-        childrenContainerStyle={{ flex: 1 }}
-      >
+    <GestureDetector gesture={swipeGesture}>
+      <Animated.View style={[animatedStyle, styles.wordView]}>
         <LinearGradient
           colors={[
             themeObject.gradientColor2,
@@ -57,7 +89,7 @@ export default function WordOfTheDay({
               flex: 1,
               display: isFocused ? "none" : "flex",
               shadowColor: themeObject.gradientColor2,
-              borderColor: themeObject.focusColor,
+              //borderColor: themeObject.focusColor,
             },
             styles.wordBox,
           ]}
@@ -75,13 +107,10 @@ export default function WordOfTheDay({
               Word of the Day
             </Text>
             <Text style={[styles.word, { color: textColor }]}>{word}</Text>
-            <Pressable style={styles.refresh} onPress={() => getWord()}>
-              <FontAwesome name="refresh" size={24} color="black" />
-            </Pressable>
           </Pressable>
         </LinearGradient>
-      </ReanimatedSwipeable>
-    </Animated.View>
+      </Animated.View>
+    </GestureDetector>
   );
 }
 
@@ -93,7 +122,7 @@ const styles = StyleSheet.create({
   },
   wordBox: {
     flex: 1,
-    borderWidth: 2,
+    //borderWidth: 2,
     borderRadius: 20,
     elevation: 100,
   },

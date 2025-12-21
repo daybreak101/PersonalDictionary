@@ -10,9 +10,10 @@ export default function ScreenReader() {
       style={[
         styles.pressable,
         {
-          borderColor: darkMode
-            ? themeObject.focusColor
-            : themeObject.unfocusColor,   backgroundColor: themeObject.gradientColor2
+          // borderColor: darkMode
+          //   ? themeObject.focusColor
+          //   : themeObject.unfocusColor,   
+            backgroundColor: themeObject.gradientColor2
         },
       ]}
     >
@@ -27,7 +28,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 5,
-    borderWidth: 2,
+    // borderWidth: 2,
   },
   text: {
     fontSize: 24,

@@ -12,6 +12,7 @@ import Animated, {
   withDelay,
   Easing,
 } from "react-native-reanimated";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function ThemeSelector() {
   const {
@@ -68,9 +69,9 @@ export default function ThemeSelector() {
         style={[
           styles.pressable,
           {
-            borderColor: darkMode
-              ? themeObject.focusColor
-              : themeObject.unfocusColor,
+            // borderColor: darkMode
+            //   ? themeObject.focusColor
+            //   : themeObject.unfocusColor,
             backgroundColor: themeObject.gradientColor2,
           },
         ]}
@@ -137,30 +138,48 @@ export default function ThemeSelector() {
             onPress={() => toggleTheme("Default")}
           >
             <Text style={{ color: textColor }}>Default</Text>
+            {themeValue === "Default" && (
+              <Ionicons style={styles.checkmark} name="checkmark-circle" size={24} color="#00ff51ff" />
+            )}
           </Pressable>
           <Pressable
             style={styles.option}
             onPress={() => toggleTheme("Iridescent")}
           >
             <Text style={{ color: textColor }}>Iridescent</Text>
+            {themeValue === "Iridescent" && (
+              <Ionicons style={styles.checkmark} name="checkmark-circle" size={24} color="#00ff51ff" />
+            )}
           </Pressable>
           <Pressable
             style={styles.option}
             onPress={() => toggleTheme("Soft Pearl")}
           >
             <Text style={{ color: textColor }}>Soft Pearl</Text>
+            {themeValue === "Soft Pearl" && (
+              <Ionicons style={styles.checkmark} name="checkmark-circle" size={24} color="#00ff51ff" />
+            )}
           </Pressable>
           <Pressable style={styles.option} onPress={() => toggleTheme("Prism")}>
             <Text style={{ color: textColor }}>Prism</Text>
+            {themeValue === "Prism" && (
+              <Ionicons style={styles.checkmark} name="checkmark-circle" size={24} color="#00ff51ff" />
+            )}
           </Pressable>
           <Pressable style={styles.option} onPress={() => toggleTheme("Comet")}>
             <Text style={{ color: textColor }}>Comet</Text>
+            {themeValue === "Comet" && (
+              <Ionicons style={styles.checkmark} name="checkmark-circle" size={24} color="#00ff51ff" />
+            )}
           </Pressable>
           <Pressable
             style={styles.option}
             onPress={() => toggleTheme("Monochrome")}
           >
             <Text style={{ color: textColor }}>Monochrome</Text>
+            {themeValue === "Monochrome" && (
+              <Ionicons style={styles.checkmark} name="checkmark-circle" size={24} color="#00ff51ff" />
+            )}
           </Pressable>
         </View>
       </Animated.View>
@@ -176,7 +195,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 5,
-    borderWidth: 2,
+    // borderWidth: 2,
   },
   text: {
     fontSize: 24,
@@ -208,7 +227,12 @@ const styles = StyleSheet.create({
     borderColor: "gray",
   },
   option: {
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 40,
   },
+  checkmark : {
+    position: "absolute",
+    top: 10,
+    right: 150
+  }
 });

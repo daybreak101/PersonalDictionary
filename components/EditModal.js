@@ -9,6 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import React, { useState } from "react";
+import Animated from "react-native-reanimated";
 
 export default function EditModal({
   setModalVisible,

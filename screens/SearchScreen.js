@@ -22,6 +22,11 @@ import { NotifProvider, useNotif } from "../context/NotifContext";
 import { useTheme } from "../context/ThemeContext";
 import RecentSearches from "../components/RecentSearches";
 import { useRefresh } from "../context/RefreshContext";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 export default function SearchScreen({ navigation }) {
   //preload hooks
@@ -64,8 +69,6 @@ export default function SearchScreen({ navigation }) {
         JSON.stringify(removeExisting)
       );
       setRecentSearches(removeExisting);
-      //setNotifDesc(key + " has been added to your dictionary");
-      //await setRefreshFlag((prev) => !prev);
       console.log("Recent Search Save successful");
     } catch (error) {
       console.log("Error saving recent search:", error);
@@ -117,7 +120,7 @@ export default function SearchScreen({ navigation }) {
       <View style={[styles.container, { backgroundColor: backgroundColor }]}>
         {isFocused || submitted ? <></> : <Logo />}
         <View style={styles.searchBox}>
-          <View style={styles.inputView}>
+          <Animated.View style={styles.inputView}>
             {isFocused ? (
               <Pressable
                 onPress={() => {
@@ -170,7 +173,7 @@ export default function SearchScreen({ navigation }) {
                 }
               />
             </Pressable>
-          </View>
+          </Animated.View>
           {isFocused && !submitted && (
             <RecentSearches
               recentSearches={recentSearches}

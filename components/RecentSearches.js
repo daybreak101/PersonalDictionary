@@ -7,7 +7,7 @@ import {
   Keyboard,
 } from "react-native";
 import React from "react";
-import Animated from "react-native-reanimated";
+import Animated, {LinearTransition, JumpingTransition, SlideInUp} from "react-native-reanimated";
 import { useTheme } from "../context/ThemeContext";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -69,11 +69,15 @@ export default function RecentSearches({
             Recent:
           </Text>
 
-          <FlatList
+          <Animated.FlatList
             data={recentSearches}
-            renderItem={({ item }) => {
+            itemLayoutAnimation={LinearTransition}
+            keyExtractor={(item) => item}
+            renderItem={({ item, index }) => {
               return (
-                <Animated.View key={item}>
+                <Animated.View key={item}
+                  entering={SlideInUp.duration(600).delay(index * 30)}
+                >
                   <ReanimatedSwipeable
                     key={item}
                     renderRightActions={() => renderRightActions(item)}
@@ -113,6 +117,7 @@ export default function RecentSearches({
             contentContainerStyle={{
               paddingVertical: 20,
               paddingHorizontal: 20,
+              paddingBottom: 50
             }}
           />
         </>

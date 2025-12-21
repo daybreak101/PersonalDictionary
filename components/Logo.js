@@ -1,7 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
 import Fontisto from "@expo/vector-icons/Fontisto";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useTheme } from "../context/ThemeContext";
 
 export default function Logo() {
