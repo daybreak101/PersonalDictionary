@@ -15,7 +15,6 @@ import ThemeSelector from "../components/settings/ThemeSelector";
 import DarkModeToggle from "../components/settings/DarkModeToggle";
 import { useTheme } from "../context/ThemeContext";
 import HapticFeedback from "../components/settings/HapticFeedback";
-import ScreenReader from "../components/settings/ScreenReader";
 import RNHapticFeedback from "react-native-haptic-feedback";
 import { useRefresh } from "../context/RefreshContext";
 
@@ -73,7 +72,6 @@ export default function SettingsScreen() {
       <View style={styles.group}>
         <Text style={[styles.groupHeader, { color: textColor }]}>Feedback</Text>
         <HapticFeedback />
-        <ScreenReader />
       </View>
       <View style={styles.group}>
         <Text style={[styles.groupHeader, { color: textColor }]}>Storage</Text>

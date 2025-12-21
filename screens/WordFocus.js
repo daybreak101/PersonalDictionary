@@ -1,7 +1,13 @@
 import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useTheme } from "../context/ThemeContext";
-import Animated, { FadeIn, SlideInDown, SlideInLeft, SlideInRight, SlideInUp } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  SlideInDown,
+  SlideInLeft,
+  SlideInRight,
+  SlideInUp,
+} from "react-native-reanimated";
 import { useRoute } from "@react-navigation/native";
 import Entypo from "@expo/vector-icons/Entypo";
 import YesNoModal from "../components/YesNoModal";
@@ -9,18 +15,10 @@ import EditModal from "../components/EditModal";
 import { useNavigation } from "@react-navigation/native";
 import { useAudioPlayer } from "expo-audio";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 
 export default function WordFocus() {
-  const {
-    gradientColor1,
-    gradientColor2,
-    focusColor,
-    unfocusColor,
-    textColor,
-    backgroundColor,
-    fadeColor1,
-    fadeColor2,
-  } = useTheme();
+  const { textColor, backgroundColor } = useTheme();
 
   const navigation = useNavigation();
 
@@ -29,7 +27,8 @@ export default function WordFocus() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDesc, setModalDesc] = useState("");
   const [editModalVisible, setEditModalVisible] = useState(false);
-
+  const [editModalVisible2, setEditModalVisible2] = useState(false);
+  const [focused, setFocused] = useState({});
   const [citations, setCitations] = useState([]);
 
   const deleteThis = async () => {
@@ -44,6 +43,65 @@ export default function WordFocus() {
   const player = useAudioPlayer(item.info.pronounce, {
     downloadFirst: true,
   });
+
+  const deleteCitation = async (key) => {
+    const updatedCitations = citations.filter(
+      (i) => i.timestamp !== key.timestamp
+    );
+    setCitations([...updatedCitations]);
+    await editItem(item.timestamp, updatedCitations);
+  };
+
+  const updateCitation = async (key) => {
+    const updatedCitations = citations.map((i) =>
+      i.timestamp === key.timestamp ? key : i
+    );
+    setCitations([...updatedCitations]);
+    await editItem(item.timestamp, updatedCitations);
+  };
+
+  const renderRightActions = (i) => (
+    <View
+      style={{
+        flex: 1,
+        maxWidth: 100,
+        minWidth: 0,
+        justifyContent: "center",
+        borderRadius: 5,
+        flexDirection: "row",
+        backgroundColor: "orange",
+      }}
+    >
+      <Pressable
+        style={{
+          width: "50%",
+          height: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "red",
+        }}
+        onPress={() => deleteCitation(i)}
+      >
+        <Entypo name="trash" size={32} color="white" />
+      </Pressable>
+      <Pressable
+        style={{
+          width: "50%",
+          height: "100%",
+          flexGrow: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "green",
+        }}
+        onPress={() => {
+          setFocused(i);
+          setEditModalVisible2(true);
+        }}
+      >
+        <Entypo name="edit" size={32} color="white" />
+      </Pressable>
+    </View>
+  );
 
   return (
     <Animated.View
@@ -62,11 +120,22 @@ export default function WordFocus() {
         modalVisible={editModalVisible}
         setModalVisible={setEditModalVisible}
         item={item}
+        currentCitations={citations}
         func={async (updatedCitations) => {
           await editItem(item.timestamp, updatedCitations);
           setCitations([...updatedCitations]);
-          refresh();
         }}
+      />
+      <EditModal
+        modalVisible={editModalVisible2}
+        setModalVisible={setEditModalVisible2}
+        item={item}
+        currentCitations={citations}
+        func={async (updatedCitations) => {
+          await editItem(item.timestamp, updatedCitations);
+          setCitations([...updatedCitations])
+        }}
+        c={focused}
       />
       <Animated.Text
         entering={SlideInLeft.duration(100).delay(300)}
@@ -75,7 +144,11 @@ export default function WordFocus() {
       >
         {item.info.word}
       </Animated.Text>
-      <Animated.ScrollView style={styles.content} entering={SlideInRight.duration(300).delay(600)}>
+      <Animated.ScrollView
+        style={styles.content}
+        entering={SlideInRight.duration(300).delay(600)}
+        contentContainerStyle={{paddingBottom: 40}}
+      >
         <View style={styles.secondRow}>
           <Text selectable={true} style={[styles.pof, { color: textColor }]}>
             {item.info.partOfSpeech}
@@ -96,7 +169,7 @@ export default function WordFocus() {
             </Pressable>
           )}
         </View>
-        {item.origin && (
+        {item.info.origin && (
           <Text selectable={true} style={styles.definition}>
             {item.info.origin}
           </Text>
@@ -129,41 +202,43 @@ export default function WordFocus() {
         )}
         {citations?.length > 0 &&
           citations.map((i, index) => (
-            <View key={index} style={styles.citation}>
-              <Text
-                selectable={true}
-                style={[styles.quote, { color: textColor }]}
+            <ReanimatedSwipeable
+              key={i.timestamp.toString()}
+              renderRightActions={() => renderRightActions(i)}
+              overshootRight={false}
+            >
+              <View
+                style={[styles.citation, { backgroundColor: backgroundColor }]}
               >
-                "{i.quote}"
-              </Text>
+                <Text style={[styles.quote, { color: textColor }]}>
+                  "{i.quote}"
+                </Text>
 
-              {i.sourceTitle !== "" && (
-                <Text
-                  selectable={true}
-                  style={[styles.title, { color: textColor }]}
-                >
-                  — {i.sourceTitle}
-                </Text>
-              )}
-              {i.sourceAuthor !== "" && (
-                <Text
-                  selectable={true}
-                  style={[styles.author, { color: textColor }]}
-                >
-                  by {i.sourceAuthor}
-                </Text>
-              )}
-            </View>
+                {i.sourceTitle !== "" && (
+                  <Text style={[styles.title, { color: textColor }]}>
+                    — {i.sourceTitle}
+                  </Text>
+                )}
+                {i.sourceAuthor !== "" && (
+                  <Text style={[styles.author, { color: textColor }]}>
+                    by {i.sourceAuthor}
+                  </Text>
+                )}
+              </View>
+            </ReanimatedSwipeable>
           ))}
       </Animated.ScrollView>
-      <Animated.View style={styles.actions} entering={SlideInDown.duration(800).delay(500)}>
+      <Animated.View
+        style={styles.actions}
+        entering={SlideInDown.duration(800).delay(500)}
+      >
         <Pressable
           style={styles.pressable}
           onPress={() => {
             setEditModalVisible(true);
           }}
         >
-          <Text style={{ color: textColor }}>Edit</Text>
+          <Text style={{ color: textColor }}>New</Text>
           <Entypo name="edit" size={24} color={textColor} />
         </Pressable>
         <Pressable
@@ -171,7 +246,7 @@ export default function WordFocus() {
           onPress={() => {
             setModalVisible(true);
             setModalDesc(
-              `Are you sure you want to delete ${item.word} from your dictionary?`
+              `delete ${item.word} from your dictionary?`
             );
           }}
         >
@@ -190,10 +265,11 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 20,
+    paddingBottom: 100,
   },
   word: {
     fontSize: 48,
-    padding: 20
+    padding: 20,
   },
   secondRow: {
     flexDirection: "row",
@@ -228,7 +304,7 @@ const styles = StyleSheet.create({
   },
   citation: {
     paddingHorizontal: 20,
-    paddingBottom: 10,
+    paddingVertical: 20,
   },
   quote: {
     fontStyle: "italic",

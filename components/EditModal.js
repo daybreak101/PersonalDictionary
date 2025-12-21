@@ -8,28 +8,59 @@ import {
   TextInput,
   ScrollView,
 } from "react-native";
-import React, { useState } from "react";
-import Animated from "react-native-reanimated";
+import React, { useState, useEffect } from "react";
+import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 
 export default function EditModal({
   setModalVisible,
   modalVisible,
   item,
+  currentCitations = [],
   func,
+  c,
 }) {
   const [newQuote, setNewQuote] = useState("");
   const [newTitle, setNewTitle] = useState("");
   const [newAuthor, setNewAuthor] = useState("");
 
+  useEffect(() => {
+    if (c) {
+      setNewQuote(c.quote);
+      setNewTitle(c.sourceTitle);
+      setNewAuthor(c.sourceAuthor);
+    }
+  }, [c]);
+
   const newCitation = () => {
     if (newQuote == "") {
       return;
     }
-
-    const updatedCitations = [
-      ...(item.info.citations ?? []),
-      { quote: newQuote, sourceTitle: newTitle, sourceAuthor: newAuthor },
-    ];
+    let updatedCitations;
+    if (c) {
+      updatedCitations = currentCitations.map((i) =>
+        i.timestamp === c.timestamp
+          ? {
+              ...i,
+              quote: newQuote,
+              sourceTitle: newTitle,
+              sourceAuthor: newAuthor,
+            }
+          : i
+      );
+    } else {
+      updatedCitations = [
+        ...currentCitations,
+        {
+          quote: newQuote,
+          sourceTitle: newTitle,
+          sourceAuthor: newAuthor,
+          timestamp: Date.now(),
+        },
+      ];
+    }
+    setNewQuote("");
+    setNewAuthor("");
+    setNewTitle("");
     func(updatedCitations);
   };
 
@@ -43,21 +74,12 @@ export default function EditModal({
       }}
     >
       <View style={styles.overlay}>
-        <View style={styles.container}>
+        <Animated.View
+          style={styles.container}
+          entering={SlideInDown.duration(200)}
+          exiting={SlideOutDown.duration(200)}
+        >
           <Text style={styles.header}>{item.word}</Text>
-          {/* {item.info.citations?.length > 0 &&
-            item.info.citations.map((citation, index) => (
-              <View key={index}>
-                <Text>{citation.quote}</Text>
-                {citation.sourceTitle !== "" && (
-                  <Text>{citation.sourceTitle}</Text>
-                )}
-                {citation.sourceAuthor !== "" && (
-                  <Text>{citation.sourceAuthor}</Text>
-                )}
-              </View>
-            ))} */}
-
           <View>
             <Text>Add a new citation?</Text>
             <View style={styles.inputView}>
@@ -120,7 +142,14 @@ export default function EditModal({
           </View>
 
           <View style={styles.buttonContainer}>
-            <Pressable onPress={() => setModalVisible(false)}>
+            <Pressable
+              onPress={() => {
+                setNewQuote("");
+                setNewAuthor("");
+                setNewTitle("");
+                setModalVisible(false);
+              }}
+            >
               <Text>Cancel</Text>
             </Pressable>
             <Pressable
@@ -132,7 +161,7 @@ export default function EditModal({
               <Text>Done</Text>
             </Pressable>
           </View>
-        </View>
+        </Animated.View>
       </View>
     </Modal>
   );
@@ -142,14 +171,16 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     padding: 20,
-    paddingVertical: 100,
-    height: 500,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
+    alignItems: "center",
   },
   container: {
-    flex: 1,
-    padding: 20,
+    position: "absolute",
+    width: "95%",
     backgroundColor: "white",
+    borderRadius: 25,
+    padding: 10,
+    marginTop: 50,
   },
   buttonContainer: {
     width: "100%",
@@ -157,6 +188,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 24,
+    paddingBottom: 20,
   },
   inputView: {
     width: "100%",
@@ -170,7 +202,7 @@ const styles = StyleSheet.create({
     borderColor: "black",
     color: "black",
     borderRadius: 10,
-    height: 50,
+    minHeight: 50,
   },
   buttonContainer: {
     padding: 10,
