@@ -3,17 +3,20 @@ import React, { useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Foundation from "@expo/vector-icons/Foundation";
 import { useTheme } from "../context/ThemeContext";
+import { useRefresh } from "../context/RefreshContext";
 
-export default function MyWordsSearch({ fullSavedWords, setSavedWords }) {
+export default function MyWordsSearch({
+  fullSavedWords,
+  savedWords,
+  setSavedWords,
+  setRenderedWords,
+  renderedWords
+}) {
   const [input, setInput] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const {
-    themeObject,
-    textColor,
-    backgroundColor,
-    darkMode,
-  } = useTheme();
+  const { themeObject, textColor, backgroundColor, darkMode } = useTheme();
+  const { refreshFlag, setRefreshFlag } = useRefresh();
 
   const handleSubmit = (word) => {
     if (word === "") {
@@ -28,7 +31,7 @@ export default function MyWordsSearch({ fullSavedWords, setSavedWords }) {
   };
 
   const search = (word) => {
-    setSavedWords(
+    setRenderedWords(
       fullSavedWords.filter((item) =>
         item.word.toLowerCase().includes(word.toLowerCase())
       )
@@ -36,7 +39,8 @@ export default function MyWordsSearch({ fullSavedWords, setSavedWords }) {
   };
 
   const revert = () => {
-    setSavedWords(fullSavedWords);
+    setSavedWords(savedWords);
+    setRefreshFlag((prev) => !prev)
   };
 
   return (
@@ -50,13 +54,25 @@ export default function MyWordsSearch({ fullSavedWords, setSavedWords }) {
           }}
           style={styles.inputPressable}
         >
-          <Ionicons name="chevron-back" size={24} color={darkMode ? themeObject.focusColor : themeObject.unfocusColor} />
+          <Ionicons
+            name="chevron-back"
+            size={24}
+            color={darkMode ? themeObject.focusColor : themeObject.unfocusColor}
+          />
         </Pressable>
       ) : (
         <></>
       )}
       <TextInput
-        style={[styles.textInput, {borderColor:  darkMode ? themeObject.focusColor : themeObject.unfocusColor, color: textColor}]}
+        style={[
+          styles.textInput,
+          {
+            borderColor: darkMode
+              ? themeObject.focusColor
+              : themeObject.unfocusColor,
+            color: textColor,
+          },
+        ]}
         autoCorrect={false}
         autoCapitalize="none"
         placeholder="Search for a word"
@@ -69,7 +85,11 @@ export default function MyWordsSearch({ fullSavedWords, setSavedWords }) {
         style={styles.searchIconContainer}
         onPress={() => handleSubmit(input)}
       >
-        <Foundation name="magnifying-glass" size={30} color={darkMode ? themeObject.focusColor : themeObject.unfocusColor} />
+        <Foundation
+          name="magnifying-glass"
+          size={30}
+          color={darkMode ? themeObject.focusColor : themeObject.unfocusColor}
+        />
       </Pressable>
     </View>
   );

@@ -276,6 +276,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   pof: {
+    includeFontPadding: true,
     alignSelf: "flex-end",
     fontStyle: "italic",
     fontSize: 15,

@@ -17,6 +17,8 @@ import { useTheme } from "../context/ThemeContext";
 import { useRefresh } from "../context/RefreshContext";
 import Animated, { LinearTransition } from "react-native-reanimated";
 import RNHapticFeedback from "react-native-haptic-feedback";
+import Filters from "../components/Filters";
+import SortBy from "../components/SortBy";
 
 export default function MyWordsList() {
   //collection of words that are currently displayed
@@ -26,6 +28,10 @@ export default function MyWordsList() {
   //entire collection of saved words
   const [fullSavedWords, setFullSavedWords] = useState([]);
   const [currentMax, setCurrentMax] = useState(0);
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [sortModalVisible, setSortModalVisible] = useState(false);
+  const [sortBy, setSortBy] = useState("Newest");
+  const [filters, setFilters] = useState({});
 
   const { refreshFlag, setRefreshFlag } = useRefresh();
 
@@ -49,9 +55,9 @@ export default function MyWordsList() {
 
     const nextMax = Math.min(currentMax + BATCH_SIZE, fullSavedWords.length);
 
-    setSavedWords((prev) => [
+    setRenderedWords((prev) => [
       ...prev,
-      ...fullSavedWords.slice(currentMax, nextMax),
+      ...savedWords.slice(currentMax, nextMax),
     ]);
 
     setCurrentMax(nextMax);
@@ -60,31 +66,35 @@ export default function MyWordsList() {
   const refreshList = async () => {
     const words = await getAllItems();
     setFullSavedWords(words);
+    setSavedWords(words);
     setCurrentMax(20);
-    setSavedWords([]);
+    setRenderedWords([]);
     requestAnimationFrame(() => {
-      setSavedWords(words.slice(0, 20));
+      setRenderedWords(words.slice(0, 20));
     });
   };
 
   useEffect(() => {
     refreshList();
+    setFilters({});
   }, [refreshFlag]);
 
   const deleteItem = async (key, refresh) => {
     try {
       const jsonValue = await AsyncStorage.getItem("words");
       const wordsArray = jsonValue != null ? JSON.parse(jsonValue) : [];
-      const filteredArray = wordsArray.filter(
-        (item) =>
-          // String(item.word) !== String(key)
-          item.timestamp !== key
-      );
+      const filteredArray = wordsArray.filter((item) => item.timestamp !== key);
       await AsyncStorage.setItem("words", JSON.stringify(filteredArray));
       console.log("Deletion successful");
       if (refresh) setRefreshFlag((prev) => !prev);
       else {
-        setSavedWords((prev) => prev.filter((item) => item.timestamp !== key))
+        setRenderedWords((prev) =>
+          prev.filter((item) => item.timestamp !== key)
+        );
+        setSavedWords((prev) => prev.filter((item) => item.timestamp !== key));
+        setFullSavedWords((prev) =>
+          prev.filter((item) => item.timestamp !== key)
+        );
       }
     } catch (error) {
       console.log("Error deleting item:", error);
@@ -110,15 +120,151 @@ export default function MyWordsList() {
     }
   };
 
+  const applyFilters = async (f) => {
+    if (f == null) {
+      setFilters({});
+      setSavedWords([...fullSavedWords]);
+    } else {
+      setFilters(f);
+
+      setSavedWords(
+        fullSavedWords.filter((word) => {
+          let quoteMatch = true;
+          let pronounceMatch = true;
+          let originMatch = true;
+          let relationsMatch = true;
+          let nounMatch = false;
+          let pronounMatch = false;
+          let verbMatch = false;
+          let adjectiveMatch = false;
+          let adverbMatch = false;
+          let prepositionMatch = false;
+          let conjunctionMatch = false;
+          let interjectionMatch = false;
+          let otherMatch = true;
+          let partOfSpeechMatch = false;
+          partOfSpeechMatch =
+            f.noun ||
+            f.pronoun ||
+            f.verb ||
+            f.adjective ||
+            f.adverb ||
+            f.preposition ||
+            f.conjunction ||
+            f.interjection ||
+            f.other;
+          if (f.quotes)
+            quoteMatch = word.info.citations.length > 0 ? true : false;
+          if (f.pronounce)
+            pronounceMatch = word.info.pronounce !== "" ? true : false;
+          if (f.origin) originMatch = word.info.origin != null ? true : false;
+          if (f.relations)
+            relationsMatch =
+              word.info.synonyms.length > 0 || word.info.antonyms.length > 0
+                ? true
+                : false;
+          if (f.noun)
+            nounMatch = word.info.partOfSpeech === "noun" ? true : false;
+          if (f.pronoun)
+            pronounMatch = word.info.partOfSpeech === "pronoun" ? true : false;
+          if (f.verb)
+            verbMatch = word.info.partOfSpeech === "verb" ? true : false;
+          if (f.adjective)
+            adjectiveMatch =
+              word.info.partOfSpeech === "adjective" ? true : false;
+          if (f.adverb)
+            adverbMatch = word.info.partOfSpeech === "adverb" ? true : false;
+          if (f.preposition)
+            prepositionMatch =
+              word.info.partOfSpeech === "preposition" ? true : false;
+          if (f.conjunction)
+            conjunctionMatch =
+              word.info.partOfSpeech === "conjunction" ? true : false;
+          if (f.interjection)
+            interjectionMatch =
+              word.info.partOfSpeech === "interjection" ? true : false;
+          if (f.other) {
+            const pof = word.info.partOfSpeech;
+            otherMatch =
+              pof !== "noun" &&
+              pof !== "pronoun" &&
+              pof !== "verb" &&
+              pof !== "adjective" &&
+              pof !== "adverb" &&
+              pof !== "preposition" &&
+              pof !== "conjunction" &&
+              pof !== "interjection"
+                ? true
+                : false;
+          }
+          return (
+            quoteMatch &&
+            pronounceMatch &&
+            originMatch &&
+            relationsMatch &&
+            (!partOfSpeechMatch ||
+              nounMatch ||
+              pronounMatch ||
+              verbMatch ||
+              adjectiveMatch ||
+              adverbMatch ||
+              prepositionMatch ||
+              conjunctionMatch ||
+              interjectionMatch ||
+              otherMatch)
+          );
+        })
+      );
+    }
+  };
+
+  useEffect(() => {
+    setRenderedWords(savedWords.slice(0, 20));
+  }, [filters]);
+
   return (
     <View style={[styles.container, { backgroundColor: backgroundColor }]}>
+      <Filters
+        modalVisible={filterModalVisible}
+        setModalVisible={setFilterModalVisible}
+        filters={filters}
+        func={applyFilters}
+      />
+      <SortBy
+        fullSavedWords={fullSavedWords}
+        savedWords={savedWords}
+        setSavedWords={setSavedWords}
+        setRenderedWords={setRenderedWords}
+        renderedWords={renderedWords}
+        modalVisible={sortModalVisible}
+        setModalVisible={setSortModalVisible}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+      />
       <MyWordsSearch
         fullSavedWords={fullSavedWords}
+        savedWords={savedWords}
         setSavedWords={setSavedWords}
+        setRenderedWords={setRenderedWords}
+        renderedWords={renderedWords}
       />
+      <View style={styles.options}>
+        <Pressable
+          style={[styles.option, { backgroundColor: themeObject.focusColor }]}
+          onPress={() => setFilterModalVisible(true)}
+        >
+          <Text style={[styles.optionText]}>Filters</Text>
+        </Pressable>
+        <Pressable
+          style={[styles.option, { backgroundColor: themeObject.focusColor }]}
+          onPress={() => setSortModalVisible(true)}
+        >
+          <Text style={[styles.optionText]}>Sort</Text>
+        </Pressable>
+      </View>
       <Animated.FlatList
         style={styles.wordList}
-        data={savedWords}
+        data={renderedWords}
         keyExtractor={(item) => item.timestamp.toString()}
         renderItem={({ item, index }) => {
           return (
@@ -140,11 +286,11 @@ export default function MyWordsList() {
               justifyContent: "center",
             }}
           >
-            <Text style={{color: textColor}}>No items found</Text>
+            <Text style={{ color: textColor }}>No items found</Text>
           </View>
         }
         ListFooterComponent={() =>
-          currentMax < fullSavedWords.length && (
+          currentMax < savedWords.length && (
             <Pressable
               onPress={() => {
                 if (hapticFeedback) {
@@ -192,4 +338,16 @@ const styles = StyleSheet.create({
   word: {
     padding: 10,
   },
+  options: {
+    flexDirection: "row",
+    paddingHorizontal: 10,
+    paddingBottom: 10,
+    justifyContent: "space-between",
+  },
+  option: {
+    padding: 10,
+    marginHorizontal: 10,
+    borderRadius: 10,
+  },
+  optionText: {},
 });
