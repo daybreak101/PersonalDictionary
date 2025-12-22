@@ -5,51 +5,29 @@ import Foundation from "@expo/vector-icons/Foundation";
 import { useTheme } from "../context/ThemeContext";
 import { useRefresh } from "../context/RefreshContext";
 
-export default function MyWordsSearch({
-  fullSavedWords,
-  savedWords,
-  setSavedWords,
-  setRenderedWords,
-  renderedWords
-}) {
-  const [input, setInput] = useState("");
+export default function MyWordsSearch({ input, setInput, func }) {
   const [submitted, setSubmitted] = useState(false);
 
-  const { themeObject, textColor, backgroundColor, darkMode } = useTheme();
+  const { themeObject, textColor, darkMode } = useTheme();
   const { refreshFlag, setRefreshFlag } = useRefresh();
 
   const handleSubmit = (word) => {
-    if (word === "") {
-      setInput("");
-      setSubmitted(false);
-      revert();
-    } else {
       setInput(word);
-      setSubmitted(true);
+      setSubmitted(word !== "");
       search(word);
-    }
+  
   };
 
-  const search = (word) => {
-    setRenderedWords(
-      fullSavedWords.filter((item) =>
-        item.word.toLowerCase().includes(word.toLowerCase())
-      )
-    );
-  };
-
-  const revert = () => {
-    setSavedWords(savedWords);
-    setRefreshFlag((prev) => !prev)
+  const search = async (word) => {
+    func(word);
   };
 
   return (
     <View style={styles.inputView}>
-      {submitted ? (
+      {/* {submitted ? (
         <Pressable
           onPress={() => {
-            setSubmitted(false);
-            revert();
+            handleSubmit("")
             Keyboard.dismiss();
           }}
           style={styles.inputPressable}
@@ -62,7 +40,7 @@ export default function MyWordsSearch({
         </Pressable>
       ) : (
         <></>
-      )}
+      )} */}
       <TextInput
         style={[
           styles.textInput,
@@ -83,7 +61,10 @@ export default function MyWordsSearch({
       />
       <Pressable
         style={styles.searchIconContainer}
-        onPress={() => handleSubmit(input)}
+        onPress={() => {
+          Keyboard.dismiss();
+          handleSubmit(input);
+        }}
       >
         <Foundation
           name="magnifying-glass"
@@ -113,6 +94,7 @@ const styles = StyleSheet.create({
     color: "black",
     borderRadius: 10,
     height: 50,
+    paddingRight: 50
   },
   searchIconContainer: {
     position: "absolute",

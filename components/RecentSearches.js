@@ -7,7 +7,11 @@ import {
   Keyboard,
 } from "react-native";
 import React from "react";
-import Animated, {LinearTransition, JumpingTransition, SlideInUp} from "react-native-reanimated";
+import Animated, {
+  LinearTransition,
+  JumpingTransition,
+  SlideInUp,
+} from "react-native-reanimated";
 import { useTheme } from "../context/ThemeContext";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -19,7 +23,8 @@ export default function RecentSearches({
   setRecentSearches,
   handleSubmit,
 }) {
-  const { themeObject, textColor, hapticFeedback, themeValue, darkMode } = useTheme();
+  const { themeObject, textColor, hapticFeedback, themeValue, darkMode } =
+    useTheme();
 
   const deleteRecentSearch = async (key) => {
     try {
@@ -75,7 +80,8 @@ export default function RecentSearches({
             keyExtractor={(item) => item}
             renderItem={({ item, index }) => {
               return (
-                <Animated.View key={item}
+                <Animated.View
+                  key={item}
                   entering={SlideInUp.duration(600).delay(index * 30)}
                 >
                   <ReanimatedSwipeable
@@ -97,13 +103,16 @@ export default function RecentSearches({
                       }}
                     >
                       <Text
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
                         style={[
                           styles.recentWord,
                           {
                             color:
                               themeValue === "Prism" ||
                               themeValue === "Soft Pearl"
-                            ? "black" : "white"
+                                ? "black"
+                                : "white",
                           },
                         ]}
                       >
@@ -115,9 +124,9 @@ export default function RecentSearches({
               );
             }}
             contentContainerStyle={{
-              paddingVertical: 20,
+              paddingTop: 20,
               paddingHorizontal: 20,
-              paddingBottom: 50
+              paddingBottom: 300,
             }}
           />
         </>

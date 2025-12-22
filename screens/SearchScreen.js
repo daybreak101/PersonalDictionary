@@ -226,6 +226,7 @@ const styles = StyleSheet.create({
     color: "black",
     borderRadius: 10,
     height: 50,
+    paddingRight: 50
   },
   searchIconContainer: {
     position: "absolute",

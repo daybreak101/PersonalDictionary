@@ -31,7 +31,24 @@ export default function MyWordsList() {
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [sortModalVisible, setSortModalVisible] = useState(false);
   const [sortBy, setSortBy] = useState("Newest");
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState({
+    quotes: false,
+    pronounce: false,
+    origin: false,
+    relations: false,
+    noun: false,
+    pronoun: false,
+    verb: false,
+    adjective: false,
+    adverb: false,
+    preposition: false,
+    conjunction: false,
+    interjection: false,
+    other: false,
+  });
+  const [input, setInput] = useState("");
+  const [submit, setSubmit] = useState(false);
+  const [searched, setSearched] = useState("");
 
   const { refreshFlag, setRefreshFlag } = useRefresh();
 
@@ -120,15 +137,28 @@ export default function MyWordsList() {
     }
   };
 
-  const applyFilters = async (f) => {
-    if (f == null) {
+  const search = async (word) => {
+    setInput(word);
+    setSearched(word);
+    await applyFilters(filters, word);
+    setSubmit((prev) => !prev);
+  };
+
+  const applyFilters = async (f, searchText = input) => {
+    if (f == null && searchText === "") {
       setFilters({});
       setSavedWords([...fullSavedWords]);
     } else {
-      setFilters(f);
-
+      const activeFilters = f ?? filters;
+      setFilters(activeFilters);
       setSavedWords(
         fullSavedWords.filter((word) => {
+          let searchMatch =
+            word.info.word.toLowerCase().includes(input.toLowerCase()) ||
+            input === ""
+              ? true
+              : false;
+          console.log(word + " === " + input + " ? " + searchMatch);
           let quoteMatch = true;
           let pronounceMatch = true;
           let originMatch = true;
@@ -141,7 +171,7 @@ export default function MyWordsList() {
           let prepositionMatch = false;
           let conjunctionMatch = false;
           let interjectionMatch = false;
-          let otherMatch = true;
+          let otherMatch = false;
           let partOfSpeechMatch = false;
           partOfSpeechMatch =
             f.noun ||
@@ -197,7 +227,9 @@ export default function MyWordsList() {
                 ? true
                 : false;
           }
+          console.log("Done");
           return (
+            searchMatch &&
             quoteMatch &&
             pronounceMatch &&
             originMatch &&
@@ -220,7 +252,7 @@ export default function MyWordsList() {
 
   useEffect(() => {
     setRenderedWords(savedWords.slice(0, 20));
-  }, [filters]);
+  }, [filters, submit]);
 
   return (
     <View style={[styles.container, { backgroundColor: backgroundColor }]}>
@@ -231,22 +263,16 @@ export default function MyWordsList() {
         func={applyFilters}
       />
       <SortBy
-        fullSavedWords={fullSavedWords}
-        savedWords={savedWords}
-        setSavedWords={setSavedWords}
-        setRenderedWords={setRenderedWords}
-        renderedWords={renderedWords}
         modalVisible={sortModalVisible}
         setModalVisible={setSortModalVisible}
         sortBy={sortBy}
         setSortBy={setSortBy}
       />
       <MyWordsSearch
-        fullSavedWords={fullSavedWords}
-        savedWords={savedWords}
-        setSavedWords={setSavedWords}
-        setRenderedWords={setRenderedWords}
-        renderedWords={renderedWords}
+        filters={filters}
+        input={input}
+        setInput={setInput}
+        func={search}
       />
       <View style={styles.options}>
         <Pressable
@@ -255,6 +281,15 @@ export default function MyWordsList() {
         >
           <Text style={[styles.optionText]}>Filters</Text>
         </Pressable>
+        {searched !== "" && (
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={[styles.searched, { color: textColor }]}
+          >
+            Searched for: {searched}
+          </Text>
+        )}
         <Pressable
           style={[styles.option, { backgroundColor: themeObject.focusColor }]}
           onPress={() => setSortModalVisible(true)}
@@ -348,6 +383,10 @@ const styles = StyleSheet.create({
     padding: 10,
     marginHorizontal: 10,
     borderRadius: 10,
+  },
+  searched: {
+    flexShrink: 1,
+    alignSelf: "center",
   },
   optionText: {},
 });

@@ -23,7 +23,6 @@ export default function Filters({
   const [other, setOther] = useState(false);
 
   useEffect(() => {
-    console.log(filters);
     if (filters) {
       setQuotes(filters.quotes ?? false);
       setPronounce(filters.pronounce ?? false);
@@ -42,23 +41,6 @@ export default function Filters({
   }, [filters, modalVisible]);
 
   const returnFilters = () => {
-    if (
-      !quotes &&
-      !pronounce &&
-      !origin &&
-      !relations &&
-      !noun &&
-      !pronoun &&
-      !verb &&
-      !adjective &&
-      !adverb &&
-      !preposition &&
-      !conjunction &&
-      !interjection &&
-      !other
-    )
-      func(null);
-    else {
       func({
         quotes: quotes,
         pronounce: pronounce,
@@ -74,7 +56,6 @@ export default function Filters({
         interjection: interjection,
         other: other,
       });
-    }
   };
 
   return (

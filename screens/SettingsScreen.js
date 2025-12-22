@@ -45,6 +45,7 @@ export default function SettingsScreen() {
   const clearSavedWords = async () => {
     try {
       await AsyncStorage.removeItem("words");
+      setRefreshFlag((prev) => !prev);
     } catch (error) {
       console.log("Error deleting saved words");
     }
