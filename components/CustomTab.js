@@ -1,15 +1,9 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import React from "react";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import RNHapticFeedback from "react-native-haptic-feedback";
 import { useTheme } from "../context/ThemeContext";
 import LinearGradient from "react-native-linear-gradient";
 
-export default function CustomTab({
-  state,
-  descriptors,
-  navigation,
-  themeValue,
-}) {
+export default function CustomTab({ state, descriptors, navigation }) {
   const { themeObject, backgroundColor, hapticFeedback } = useTheme();
   return (
     <LinearGradient
@@ -88,8 +82,6 @@ export default function CustomTab({
 const styles = StyleSheet.create({
   tabBarContainer: {
     flexDirection: "row",
-    // borderTopWidth: 1,
-    // borderTopColor: "#eee",
     paddingVertical: 0,
   },
   tabItem: {

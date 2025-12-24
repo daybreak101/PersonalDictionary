@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useMemo, useEffect } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ThemeContext = createContext(null);
@@ -126,7 +126,6 @@ const ThemeProvider = ({ children }) => {
         screenReader: screenReader,
       };
       await AsyncStorage.setItem("settings", JSON.stringify(settings));
-      console.log("Save successful");
     } catch (error) {
       console.log("Error saving item:", error);
     }

@@ -1,14 +1,5 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-  Button,
-  Modal,
-  Alert,
-  ScrollView,
-} from "react-native";
-import React, { useState } from "react";
+import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
+import { useState } from "react";
 import YesNoModal from "../components/YesNoModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ThemeSelector from "../components/settings/ThemeSelector";
@@ -17,6 +8,8 @@ import { useTheme } from "../context/ThemeContext";
 import HapticFeedback from "../components/settings/HapticFeedback";
 import RNHapticFeedback from "react-native-haptic-feedback";
 import { useRefresh } from "../context/RefreshContext";
+import { useNotif } from "../context/NotifContext";
+import Notification from "../components/Notification";
 
 export default function SettingsScreen() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -32,10 +25,13 @@ export default function SettingsScreen() {
     themeValue,
   } = useTheme();
   const { setRefreshFlag } = useRefresh();
+  const { notifVisible, setNotifVisible, setNotifDesc } = useNotif();
 
   const clearRecentSearches = async () => {
     try {
       await AsyncStorage.removeItem("recentSearches");
+      setNotifVisible(true);
+      setNotifDesc("All recent searches successfully deleted.");
       setRefreshFlag((prev) => !prev);
     } catch (error) {
       console.log("Error deleting recent searches");
@@ -46,104 +42,114 @@ export default function SettingsScreen() {
     try {
       await AsyncStorage.removeItem("words");
       setRefreshFlag((prev) => !prev);
+      setNotifVisible(true);
+      setNotifDesc("All saved words successfully deleted.");
+      setRefreshFlag((prev) => !prev);
     } catch (error) {
       console.log("Error deleting saved words");
     }
   };
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: backgroundColor }]}
-      contentContainerStyle={{ paddingBottom: 50 }}
-    >
-      <YesNoModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        desc={modalDesc}
-        func={selectedFunc}
-      />
-      <Text style={[styles.header, { color: textColor }]}>Settings</Text>
-      <View style={styles.group}>
-        <Text style={[styles.groupHeader, { color: textColor }]}>
-          Appearance
-        </Text>
-        <ThemeSelector />
-        <DarkModeToggle />
-      </View>
-      <View style={styles.group}>
-        <Text style={[styles.groupHeader, { color: textColor }]}>Feedback</Text>
-        <HapticFeedback />
-      </View>
-      <View style={styles.group}>
-        <Text style={[styles.groupHeader, { color: textColor }]}>Storage</Text>
-        <Pressable
-          style={[
-            styles.pressable,
-            {
-              borderColor: darkMode
-                ? themeObject.focusColor
-                : themeObject.unfocusColor,
-              backgroundColor: themeObject.unfocusColor,
-            },
-          ]}
-          onPress={() => {
-            if (hapticFeedback) {
-              RNHapticFeedback.trigger("notificationWarning");
-            }
-            setModalDesc("clear recent searches");
-            setModalVisible(true);
-            setSelectedFunc(() => clearRecentSearches);
-          }}
-        >
-          <Text
+    <View style={{ flex: 1 }}>
+      <ScrollView
+        style={[styles.container, { backgroundColor: backgroundColor }]}
+        contentContainerStyle={{ paddingBottom: 50 }}
+      >
+        <YesNoModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          desc={modalDesc}
+          func={selectedFunc}
+        />
+        <Text style={[styles.header, { color: textColor }]}>Settings</Text>
+        <View style={styles.group}>
+          <Text style={[styles.groupHeader, { color: textColor }]}>
+            Appearance
+          </Text>
+          <ThemeSelector />
+          <DarkModeToggle />
+        </View>
+        <View style={styles.group}>
+          <Text style={[styles.groupHeader, { color: textColor }]}>
+            Feedback
+          </Text>
+          <HapticFeedback />
+        </View>
+        <View style={styles.group}>
+          <Text style={[styles.groupHeader, { color: textColor }]}>
+            Storage
+          </Text>
+          <Pressable
             style={[
-              styles.text,
+              styles.pressable,
               {
-                color:
-                  themeValue === "Prism" || themeValue === "Soft Pearl"
-                    ? "black"
-                    : "white",
+                borderColor: darkMode
+                  ? themeObject.focusColor
+                  : themeObject.unfocusColor,
+                backgroundColor: themeObject.unfocusColor,
               },
             ]}
+            onPress={() => {
+              if (hapticFeedback) {
+                RNHapticFeedback.trigger("notificationWarning");
+              }
+              setModalDesc("clear recent searches");
+              setModalVisible(true);
+              setSelectedFunc(() => clearRecentSearches);
+            }}
           >
-            Clear Recent Searches
-          </Text>
-        </Pressable>
-        <Pressable
-          style={[
-            styles.pressable,
-            {
-              borderColor: darkMode
-                ? themeObject.focusColor
-                : themeObject.unfocusColor,
-              backgroundColor: themeObject.unfocusColor,
-            },
-          ]}
-          onPress={() => {
-            if (hapticFeedback) {
-              RNHapticFeedback.trigger("notificationWarning");
-            }
-            setModalDesc("clear saved words");
-            setModalVisible(true);
-            setSelectedFunc(() => clearSavedWords);
-          }}
-        >
-          <Text
+            <Text
+              style={[
+                styles.text,
+                {
+                  color:
+                    themeValue === "Prism" || themeValue === "Soft Pearl"
+                      ? "black"
+                      : "white",
+                },
+              ]}
+            >
+              Clear Recent Searches
+            </Text>
+          </Pressable>
+          <Pressable
             style={[
-              styles.text,
+              styles.pressable,
               {
-                color:
-                  themeValue === "Prism" || themeValue === "Soft Pearl"
-                    ? "black"
-                    : "white",
+                borderColor: darkMode
+                  ? themeObject.focusColor
+                  : themeObject.unfocusColor,
+                backgroundColor: themeObject.unfocusColor,
               },
             ]}
+            onPress={() => {
+              if (hapticFeedback) {
+                RNHapticFeedback.trigger("notificationWarning");
+              }
+              setModalDesc("clear saved words");
+              setModalVisible(true);
+              setSelectedFunc(() => clearSavedWords);
+            }}
           >
-            Clear Saved Words
-          </Text>
-        </Pressable>
-      </View>
-    </ScrollView>
+            <Text
+              style={[
+                styles.text,
+                {
+                  color:
+                    themeValue === "Prism" || themeValue === "Soft Pearl"
+                      ? "black"
+                      : "white",
+                },
+              ]}
+            >
+              Clear Saved Words
+            </Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+      {notifVisible && <Notification />}
+    </View>
   );
 }
 
@@ -166,7 +172,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 5,
-    // borderWidth: 2,
     marginBottom: 2,
   },
 

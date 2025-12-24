@@ -1,5 +1,4 @@
-import { StyleSheet, Text, View, Modal, Alert, Pressable } from "react-native";
-import React from "react";
+import { StyleSheet, Text, View, Modal, Pressable } from "react-native";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 
 export default function YesNoModal({

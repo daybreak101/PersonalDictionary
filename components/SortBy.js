@@ -1,20 +1,17 @@
-import { StyleSheet, Text, View, Modal, Alert, Pressable } from "react-native";
-import React, { useState } from "react";
+import { StyleSheet, Text, View, Modal, Pressable } from "react-native";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
-import { Checkbox } from "expo-checkbox";
+import { RadioButton } from "react-native-paper";
 
 export default function SortBy({
-  fullSavedWords,
-  savedWords,
-  setSavedWords,
-  setRenderedWords,
-  renderedWords,
   modalVisible,
   setModalVisible,
   sortBy,
   setSortBy,
+  func,
 }) {
-  const [isChecked, setChecked] = useState(false);
+  const returnSort = () => {
+    func();
+  };
 
   return (
     <Modal
@@ -31,25 +28,62 @@ export default function SortBy({
           entering={SlideInDown.duration(200)}
           exiting={SlideOutDown.duration(200)}
         >
-          <Text>Sort By: </Text>
-          <Pressable>
-            <Text>Newest</Text>
-          </Pressable>
-          <Pressable>
-            <Text>Oldest</Text>
-          </Pressable>
-          <Pressable>
-            <Text>Alphabetical</Text>
-          </Pressable>
-          <Pressable>
-            <Text>Reverse Alphabet</Text>
-          </Pressable>
-          <Pressable>
-            <Text>Longest</Text>
-          </Pressable>
-          <Pressable>
-            <Text>Shortest</Text>
-          </Pressable>
+          <RadioButton.Group onValueChange={(newValue) => setSortBy(newValue)}>
+            <Text>Sort By: </Text>
+            <View style={styles.optionContainer}>
+              <RadioButton
+                value="Newest"
+                status={sortBy === "Newest" ? "checked" : "unchecked"}
+              />
+              <Text>Newest</Text>
+            </View>
+            <View style={styles.optionContainer}>
+              <RadioButton
+                value="Oldest"
+                status={sortBy === "Oldest" ? "checked" : "unchecked"}
+              />
+              <Text>Oldest</Text>
+            </View>
+            <View style={styles.optionContainer}>
+              <RadioButton
+                value="Alphabetical"
+                status={sortBy === "Alphabetical" ? "checked" : "unchecked"}
+              />
+              <Text>Alphabetical</Text>
+            </View>
+            <View style={styles.optionContainer}>
+              <RadioButton
+                value="Reverse Alphabet"
+                status={sortBy === "Reverse Alphabet" ? "checked" : "unchecked"}
+              />
+              <Text>Reverse Alphabet</Text>
+            </View>
+            <View style={styles.optionContainer}>
+              <RadioButton
+                value="Longest"
+                status={sortBy === "Longest" ? "checked" : "unchecked"}
+              />
+              <Text>Longest</Text>
+            </View>
+            <View style={styles.optionContainer}>
+              <RadioButton
+                value="Shortest"
+                status={sortBy === "Shortest" ? "checked" : "unchecked"}
+              />
+              <Text>Shortest</Text>
+            </View>
+          </RadioButton.Group>
+
+          <View style={styles.buttonContainer}>
+            <Pressable
+              onPress={() => {
+                returnSort();
+                setModalVisible(false);
+              }}
+            >
+              <Text>Done</Text>
+            </Pressable>
+          </View>
         </Animated.View>
       </View>
     </Modal>
@@ -66,13 +100,22 @@ const styles = StyleSheet.create({
   },
   container: {
     position: "absolute",
-    width: "85%",
+    width: "95%",
     backgroundColor: "white",
     borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
   },
-  buttonContainer: {
+  optionContainer: {
     width: "100%",
     flexDirection: "row",
+    padding: 10,
+    alignItems: "center",
+  },
+  buttonContainer: {
+    padding: 10,
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
   textBox: {
     padding: 20,
@@ -87,5 +130,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     textAlign: "center",
     backgroundColor: "#e0e0e0ff",
+  },
+  checkbox: {
+    marginRight: 10,
+  },
+  pofGrid: {
+    flexDirection: "row",
+  },
+  header: {
+    padding: 10,
   },
 });

@@ -3,12 +3,10 @@ import {
   Text,
   View,
   Modal,
-  Alert,
   Pressable,
   TextInput,
-  ScrollView,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 
 export default function EditModal({
@@ -83,57 +81,38 @@ export default function EditModal({
           <View>
             <Text>Add a new citation?</Text>
             <View style={styles.inputView}>
-              <Text>Quote:</Text>
               <TextInput
-                style={[
-                  styles.textInput,
-                  {
-                    // borderColor: darkMode ? focusColor : unfocusColor,
-                    // color: textColor,
-                  },
-                ]}
-                numberOfLines={10}
+                style={[styles.textInput, { minHeight: 100 }]}
+                numberOfLines={8}
                 multiline={true}
                 textAlignVertical="top"
                 autoCorrect={false}
                 autoCapitalize="sentences"
-                placeholder=""
+                placeholder={`"Quote"`}
                 placeholderTextColor="gray"
                 value={newQuote}
                 onChangeText={setNewQuote}
               />
             </View>
             <View style={styles.inputView}>
-              <Text>Title:</Text>
+              <Text> — </Text>
               <TextInput
-                style={[
-                  styles.textInput,
-                  {
-                    // borderColor: darkMode ? focusColor : unfocusColor,
-                    // color: textColor,
-                  },
-                ]}
+                style={styles.textInput}
                 autoCorrect={false}
                 autoCapitalize="words"
-                placeholder=""
+                placeholder="Title?"
                 placeholderTextColor="gray"
                 value={newTitle}
                 onChangeText={setNewTitle}
               />
             </View>
             <View style={styles.inputView}>
-              <Text>Author:</Text>
+              <Text>by </Text>
               <TextInput
-                style={[
-                  styles.textInput,
-                  {
-                    // borderColor: darkMode ? focusColor : unfocusColor,
-                    // color: textColor,
-                  },
-                ]}
+                style={styles.textInput}
                 autoCorrect={false}
                 autoCapitalize="words"
-                placeholder=""
+                placeholder="Author?"
                 placeholderTextColor="gray"
                 value={newAuthor}
                 onChangeText={setNewAuthor}
@@ -170,13 +149,13 @@ export default function EditModal({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    padding: 20,
+    padding: 10,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     alignItems: "center",
   },
   container: {
     position: "absolute",
-    width: "95%",
+    width: "100%",
     backgroundColor: "white",
     borderRadius: 25,
     padding: 10,
@@ -187,6 +166,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   header: {
+    paddingTop: 10,
+    paddingLeft: 10,
     fontSize: 24,
     paddingBottom: 20,
   },
@@ -202,7 +183,7 @@ const styles = StyleSheet.create({
     borderColor: "black",
     color: "black",
     borderRadius: 10,
-    minHeight: 50,
+    minHeight: 10,
   },
   buttonContainer: {
     padding: 10,

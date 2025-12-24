@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, Pressable, Vibration } from "react-native";
-import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, Pressable } from "react-native";
+import { useState } from "react";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -19,19 +19,11 @@ export default function DefinitionCard({
   item,
   deleteItem,
   editItem,
-  refresh,
   index = 1,
 }) {
   const navigation = useNavigation();
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalDesc, setModalDesc] = useState("");
 
-  const { themeObject, hapticFeedback, textColor } = useTheme();
-
-  const options = {
-    enableVibrateFallback: true,
-    ignoreAndroidSystemSettings: false,
-  };
+  const { themeObject, hapticFeedback } = useTheme();
 
   //expansion animation
   const expanded = useSharedValue(0);

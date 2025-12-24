@@ -1,12 +1,11 @@
-import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
-import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, Pressable } from "react-native";
+import { useState, useEffect } from "react";
 import { useTheme } from "../context/ThemeContext";
 import Animated, {
   FadeIn,
   SlideInDown,
   SlideInLeft,
   SlideInRight,
-  SlideInUp,
 } from "react-native-reanimated";
 import { useRoute } from "@react-navigation/native";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -133,7 +132,7 @@ export default function WordFocus() {
         currentCitations={citations}
         func={async (updatedCitations) => {
           await editItem(item.timestamp, updatedCitations);
-          setCitations([...updatedCitations])
+          setCitations([...updatedCitations]);
         }}
         c={focused}
       />
@@ -147,7 +146,7 @@ export default function WordFocus() {
       <Animated.ScrollView
         style={styles.content}
         entering={SlideInRight.duration(300).delay(600)}
-        contentContainerStyle={{paddingBottom: 40}}
+        contentContainerStyle={{ paddingBottom: 40 }}
       >
         <View style={styles.secondRow}>
           <Text selectable={true} style={[styles.pof, { color: textColor }]}>
@@ -245,9 +244,7 @@ export default function WordFocus() {
           style={styles.pressable}
           onPress={() => {
             setModalVisible(true);
-            setModalDesc(
-              `delete ${item.word} from your dictionary?`
-            );
+            setModalDesc(`delete ${item.word} from your dictionary?`);
           }}
         >
           <Text style={{ color: textColor }}>Delete</Text>

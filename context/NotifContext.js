@@ -10,22 +10,20 @@ export const useNotif = () => {
 
 const NotifProvider = ({ children }) => {
   const [notifVisible, setNotifVisible] = useState(false);
-  const [notifDesc, setNotifDesc] = useState("")
+  const [notifDesc, setNotifDesc] = useState("");
 
   const value = useMemo(
     () => ({
       notifVisible,
       setNotifVisible,
       notifDesc,
-      setNotifDesc
+      setNotifDesc,
     }),
     [notifVisible, notifDesc]
   );
 
   return (
-    <NotifContext.Provider value={value}>
-      {children}
-    </NotifContext.Provider>
+    <NotifContext.Provider value={value}>{children}</NotifContext.Provider>
   );
 };
 

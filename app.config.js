@@ -8,6 +8,6 @@ export default {
     android: {
       package: "com.anonymous.PersonalDictionary",
     },
-    plugins: ["expo-sqlite", "expo-asset", "expo-audio"],
+    plugins: ["expo-asset", "expo-audio"],
   },
 };

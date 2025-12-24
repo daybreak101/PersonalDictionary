@@ -1,21 +1,17 @@
 import { StyleSheet, View, Pressable, TextInput, Keyboard } from "react-native";
-import React, { useState } from "react";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { useState } from "react";
 import Foundation from "@expo/vector-icons/Foundation";
 import { useTheme } from "../context/ThemeContext";
-import { useRefresh } from "../context/RefreshContext";
 
 export default function MyWordsSearch({ input, setInput, func }) {
   const [submitted, setSubmitted] = useState(false);
 
   const { themeObject, textColor, darkMode } = useTheme();
-  const { refreshFlag, setRefreshFlag } = useRefresh();
 
   const handleSubmit = (word) => {
-      setInput(word);
-      setSubmitted(word !== "");
-      search(word);
-  
+    setInput(word);
+    setSubmitted(word !== "");
+    search(word);
   };
 
   const search = async (word) => {
@@ -24,23 +20,6 @@ export default function MyWordsSearch({ input, setInput, func }) {
 
   return (
     <View style={styles.inputView}>
-      {/* {submitted ? (
-        <Pressable
-          onPress={() => {
-            handleSubmit("")
-            Keyboard.dismiss();
-          }}
-          style={styles.inputPressable}
-        >
-          <Ionicons
-            name="chevron-back"
-            size={24}
-            color={darkMode ? themeObject.focusColor : themeObject.unfocusColor}
-          />
-        </Pressable>
-      ) : (
-        <></>
-      )} */}
       <TextInput
         style={[
           styles.textInput,
@@ -94,7 +73,7 @@ const styles = StyleSheet.create({
     color: "black",
     borderRadius: 10,
     height: 50,
-    paddingRight: 50
+    paddingRight: 50,
   },
   searchIconContainer: {
     position: "absolute",

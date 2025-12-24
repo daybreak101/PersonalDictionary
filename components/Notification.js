@@ -1,12 +1,15 @@
-import { StyleSheet, Text, View, Animated } from "react-native";
-import React, { useState, useEffect, useRef } from "react";
+import { StyleSheet, Text, Animated } from "react-native";
+import { useEffect, useRef } from "react";
 import { useNotif } from "../context/NotifContext";
-import { useTheme } from "../context/ThemeContext"
+import { useTheme } from "../context/ThemeContext";
 
-export default function Notification({duration = 1000, totalDuration = 2000}) {
-  const fadeAnim = useRef(new Animated.Value(1)).current; //initial opacity: 1
-    const { setNotifVisible, notifDesc } = useNotif()
-    const { themeObject } = useTheme()
+export default function Notification({
+  duration = 1000,
+  totalDuration = 2000,
+}) {
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const { setNotifVisible, notifDesc } = useNotif();
+  const { themeObject } = useTheme();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -18,13 +21,18 @@ export default function Notification({duration = 1000, totalDuration = 2000}) {
     }, totalDuration);
 
     return () => {
-        clearTimeout(timer)
-        fadeAnim.stopAnimation()
-    }
-  }, [duration, totalDuration]);
+      clearTimeout(timer);
+      fadeAnim.stopAnimation();
+    };
+  }, [duration, totalDuration, notifDesc]);
 
   return (
-    <Animated.View style={[styles.container, {opacity: fadeAnim, backgroundColor: themeObject.focusColor}]}>
+    <Animated.View
+      style={[
+        styles.container,
+        { opacity: fadeAnim, backgroundColor: themeObject.focusColor },
+      ]}
+    >
       <Text>{notifDesc}</Text>
     </Animated.View>
   );
@@ -38,7 +46,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "black",
     borderRadius: 20,
-    // backgroundColor: "#00ff95ff",
     height: 40,
     alignItems: "center",
     justifyContent: "center",

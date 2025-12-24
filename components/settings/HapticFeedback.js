@@ -1,5 +1,4 @@
 import { StyleSheet, Text, Switch, Pressable } from "react-native";
-import React from "react";
 import { useTheme } from "../../context/ThemeContext";
 import RNHapticFeedback from "react-native-haptic-feedback";
 
@@ -23,9 +22,6 @@ export default function HapticFeedback() {
       style={[
         styles.pressable,
         {
-          // borderColor: darkMode
-          //   ? themeObject.focusColor
-          //   : themeObject.unfocusColor,
           backgroundColor: themeObject.gradientColor2,
         },
       ]}
@@ -55,7 +51,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     borderRadius: 5,
-    // borderWidth: 2,
     marginBottom: 2,
   },
   text: {

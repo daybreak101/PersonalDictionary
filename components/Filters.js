@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, Modal, Alert, Pressable } from "react-native";
-import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, Modal, Pressable } from "react-native";
+import { useState, useEffect } from "react";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 import { Checkbox } from "expo-checkbox";
 export default function Filters({
@@ -41,21 +41,21 @@ export default function Filters({
   }, [filters, modalVisible]);
 
   const returnFilters = () => {
-      func({
-        quotes: quotes,
-        pronounce: pronounce,
-        origin: origin,
-        relations: relations,
-        noun: noun,
-        pronoun: pronoun,
-        verb: verb,
-        adjective: adjective,
-        adverb: adverb,
-        preposition: preposition,
-        conjunction: conjunction,
-        interjection: interjection,
-        other: other,
-      });
+    func({
+      quotes: quotes,
+      pronounce: pronounce,
+      origin: origin,
+      relations: relations,
+      noun: noun,
+      pronoun: pronoun,
+      verb: verb,
+      adjective: adjective,
+      adverb: adverb,
+      preposition: preposition,
+      conjunction: conjunction,
+      interjection: interjection,
+      other: other,
+    });
   };
 
   return (

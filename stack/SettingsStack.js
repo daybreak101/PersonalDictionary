@@ -1,6 +1,4 @@
-import { StyleSheet, Text, View, StatusBar } from "react-native";
-import * as React from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SettingsScreen from "../screens/SettingsScreen";
 
@@ -16,5 +14,3 @@ export default function SettingsStack() {
     </Stack.Navigator>
   );
 }
-
-const styles = StyleSheet.create({});

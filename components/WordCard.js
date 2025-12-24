@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useNotif } from "../context/NotifContext";
@@ -7,15 +7,9 @@ import { useRefresh } from "../context/RefreshContext";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useAudioPlayer } from "expo-audio";
 
-
 export default function WordCard({ definition, word }) {
   const { setNotifVisible, setNotifDesc } = useNotif();
   const { refreshFlag, setRefreshFlag } = useRefresh();
-
-  useEffect(() => {
-    console.log("definition: " + JSON.stringify(definition));
-    console.log(word);
-  }, []);
 
   const saveItem = async (key, value) => {
     try {
@@ -34,7 +28,6 @@ export default function WordCard({ definition, word }) {
         setNotifDesc(key + " has been added to your dictionary");
         await setRefreshFlag((prev) => !prev);
       }
-      console.log("Save successful");
     } catch (error) {
       console.log("Error saving item:", error);
     }
@@ -45,9 +38,8 @@ export default function WordCard({ definition, word }) {
   }
 
   const player = useAudioPlayer(definition.pronounce, {
-    downloadFirst: true
-  })
-
+    downloadFirst: true,
+  });
 
   return (
     <View style={styles.card}>
@@ -59,15 +51,13 @@ export default function WordCard({ definition, word }) {
       {definition.antonyms?.length > 0 && (
         <Text>Antonyms: {definition.antonyms.join(", ")}</Text>
       )}
-      {definition.origin && (
-        <Text>Origin: {definition.origin}</Text>
-      )}
+      {definition.origin && <Text>Origin: {definition.origin}</Text>}
       {definition.pronounce && (
         <Pressable
           style={styles.refresh}
-          onPress={ () => {
-            player.seekTo(0)
-            player.play()
+          onPress={() => {
+            player.seekTo(0);
+            player.play();
           }}
         >
           <MaterialCommunityIcons name="volume-high" size={24} color="black" />

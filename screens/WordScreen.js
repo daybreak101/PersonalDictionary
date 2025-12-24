@@ -15,12 +15,7 @@ export default function WordScreen({ word }) {
   const [loading, setLoading] = useState(false);
   const lastWord = useRef("");
 
-  const {
-    themeObject,
-    textColor,
-    backgroundColor,
-    darkMode,
-  } = useTheme();
+  const { themeObject, textColor, darkMode } = useTheme();
 
   useEffect(() => {
     const getDefinition = async () => {
@@ -36,7 +31,7 @@ export default function WordScreen({ word }) {
         //filter this wacky api
         let apiDef = [...res2.data];
         let word2 = "";
-        let pronounce = ""
+        let pronounce = "";
 
         if (apiDef.title === "No Definitions Found") {
           setDefinitions([]);
@@ -46,8 +41,7 @@ export default function WordScreen({ word }) {
         const result = [];
         for (let i of apiDef) {
           word2 = i.word;
-          const origin = i.origin
-          console.log(origin)
+          const origin = i.origin;
           for (let phonetic of i.phonetics) {
             if (phonetic.audio.endsWith("-us.mp3")) {
               pronounce = phonetic.audio;
@@ -67,7 +61,7 @@ export default function WordScreen({ word }) {
                 definition: definition,
                 synonyms: synonyms,
                 antonyms: antonyms,
-                origin: origin
+                origin: origin,
               });
             }
           }
@@ -97,7 +91,13 @@ export default function WordScreen({ word }) {
           style={styles.wordList}
           data={definitions}
           renderItem={({ item }) => {
-            return <WordCard word={word} definition={item} playAudio={(uri) => playAudio(uri)}/>;
+            return (
+              <WordCard
+                word={word}
+                definition={item}
+                playAudio={(uri) => playAudio(uri)}
+              />
+            );
           }}
           ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
           ListEmptyComponent={

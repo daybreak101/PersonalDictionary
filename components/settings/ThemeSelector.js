@@ -1,16 +1,11 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
-import React, { useState } from "react";
-import { ThemeProvider, useTheme } from "../../context/ThemeContext";
+import { useState } from "react";
+import { useTheme } from "../../context/ThemeContext";
 import RNHapticFeedback from "react-native-haptic-feedback";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  useSpring,
   withTiming,
-  withSpring,
-  interpolateColor,
-  withDelay,
-  Easing,
 } from "react-native-reanimated";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
@@ -22,7 +17,6 @@ export default function ThemeSelector() {
     setThemeValue,
     textColor,
     hapticFeedback,
-    darkMode,
   } = useTheme();
 
   const [contentHeight, setContentHeight] = useState(0);
@@ -69,9 +63,6 @@ export default function ThemeSelector() {
         style={[
           styles.pressable,
           {
-            // borderColor: darkMode
-            //   ? themeObject.focusColor
-            //   : themeObject.unfocusColor,
             backgroundColor: themeObject.gradientColor2,
           },
         ]}
@@ -139,7 +130,12 @@ export default function ThemeSelector() {
           >
             <Text style={{ color: textColor }}>Default</Text>
             {themeValue === "Default" && (
-              <Ionicons style={styles.checkmark} name="checkmark-circle" size={24} color="#00ff51ff" />
+              <Ionicons
+                style={styles.checkmark}
+                name="checkmark-circle"
+                size={24}
+                color="#00ff51ff"
+              />
             )}
           </Pressable>
           <Pressable
@@ -148,7 +144,12 @@ export default function ThemeSelector() {
           >
             <Text style={{ color: textColor }}>Iridescent</Text>
             {themeValue === "Iridescent" && (
-              <Ionicons style={styles.checkmark} name="checkmark-circle" size={24} color="#00ff51ff" />
+              <Ionicons
+                style={styles.checkmark}
+                name="checkmark-circle"
+                size={24}
+                color="#00ff51ff"
+              />
             )}
           </Pressable>
           <Pressable
@@ -157,19 +158,34 @@ export default function ThemeSelector() {
           >
             <Text style={{ color: textColor }}>Soft Pearl</Text>
             {themeValue === "Soft Pearl" && (
-              <Ionicons style={styles.checkmark} name="checkmark-circle" size={24} color="#00ff51ff" />
+              <Ionicons
+                style={styles.checkmark}
+                name="checkmark-circle"
+                size={24}
+                color="#00ff51ff"
+              />
             )}
           </Pressable>
           <Pressable style={styles.option} onPress={() => toggleTheme("Prism")}>
             <Text style={{ color: textColor }}>Prism</Text>
             {themeValue === "Prism" && (
-              <Ionicons style={styles.checkmark} name="checkmark-circle" size={24} color="#00ff51ff" />
+              <Ionicons
+                style={styles.checkmark}
+                name="checkmark-circle"
+                size={24}
+                color="#00ff51ff"
+              />
             )}
           </Pressable>
           <Pressable style={styles.option} onPress={() => toggleTheme("Comet")}>
             <Text style={{ color: textColor }}>Comet</Text>
             {themeValue === "Comet" && (
-              <Ionicons style={styles.checkmark} name="checkmark-circle" size={24} color="#00ff51ff" />
+              <Ionicons
+                style={styles.checkmark}
+                name="checkmark-circle"
+                size={24}
+                color="#00ff51ff"
+              />
             )}
           </Pressable>
           <Pressable
@@ -178,7 +194,12 @@ export default function ThemeSelector() {
           >
             <Text style={{ color: textColor }}>Monochrome</Text>
             {themeValue === "Monochrome" && (
-              <Ionicons style={styles.checkmark} name="checkmark-circle" size={24} color="#00ff51ff" />
+              <Ionicons
+                style={styles.checkmark}
+                name="checkmark-circle"
+                size={24}
+                color="#00ff51ff"
+              />
             )}
           </Pressable>
         </View>
@@ -195,7 +216,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 5,
-    // borderWidth: 2,
   },
   text: {
     fontSize: 24,
@@ -223,16 +243,18 @@ const styles = StyleSheet.create({
     borderColor: "black",
   },
   optionsContainer: {
-    borderWidth: 1,
+    marginHorizontal: 5,
+    borderEndWidth: 1,
+    borderStartWidth: 1,
     borderColor: "gray",
   },
   option: {
     paddingVertical: 12,
     paddingHorizontal: 40,
   },
-  checkmark : {
+  checkmark: {
     position: "absolute",
     top: 10,
-    right: 150
-  }
+    right: 150,
+  },
 });

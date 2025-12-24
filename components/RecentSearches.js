@@ -1,17 +1,5 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  Pressable,
-  Keyboard,
-} from "react-native";
-import React from "react";
-import Animated, {
-  LinearTransition,
-  JumpingTransition,
-  SlideInUp,
-} from "react-native-reanimated";
+import { StyleSheet, Text, View, Pressable, Keyboard } from "react-native";
+import Animated, { LinearTransition, SlideInUp } from "react-native-reanimated";
 import { useTheme } from "../context/ThemeContext";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -36,7 +24,6 @@ export default function RecentSearches({
         JSON.stringify(removeExisting)
       );
       setRecentSearches((prev) => prev.filter((item) => key !== item));
-      console.log("Recent Search Delete successful");
     } catch (error) {
       console.log("Error deleting recent search:", error);
     }

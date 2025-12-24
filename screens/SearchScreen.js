@@ -1,15 +1,12 @@
 import {
   StyleSheet,
-  Text,
   View,
   TextInput,
-  KeyboardAvoidingView,
   Pressable,
-  TouchableWithoutFeedback,
   Keyboard,
   BackHandler,
 } from "react-native";
-import React, { useState, useEffect, createContext, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useFonts, MonteCarlo_400Regular } from "@expo-google-fonts/montecarlo";
 import Foundation from "@expo/vector-icons/Foundation";
 import WordOfTheDay from "../components/WordOfTheDay";
@@ -18,15 +15,11 @@ import WordScreen from "./WordScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Notification from "../components/Notification";
-import { NotifProvider, useNotif } from "../context/NotifContext";
+import { useNotif } from "../context/NotifContext";
 import { useTheme } from "../context/ThemeContext";
 import RecentSearches from "../components/RecentSearches";
 import { useRefresh } from "../context/RefreshContext";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 
 export default function SearchScreen({ navigation }) {
   //preload hooks
@@ -34,8 +27,7 @@ export default function SearchScreen({ navigation }) {
     MonteCarlo_400Regular,
   });
 
-  const { themeObject, textColor, backgroundColor, darkMode, hapticFeedback } =
-    useTheme();
+  const { themeObject, textColor, backgroundColor, darkMode } = useTheme();
   const { refreshFlag } = useRefresh();
 
   //states
@@ -69,7 +61,6 @@ export default function SearchScreen({ navigation }) {
         JSON.stringify(removeExisting)
       );
       setRecentSearches(removeExisting);
-      console.log("Recent Search Save successful");
     } catch (error) {
       console.log("Error saving recent search:", error);
     }
@@ -158,7 +149,6 @@ export default function SearchScreen({ navigation }) {
               value={input}
               onChangeText={setInput}
               onFocus={() => setIsFocused(true)}
-              // onBlur={() => setIsFocused(false)}
               onSubmitEditing={(e) => handleSubmit(e.nativeEvent.text)}
             />
             <Pressable
@@ -226,7 +216,7 @@ const styles = StyleSheet.create({
     color: "black",
     borderRadius: 10,
     height: 50,
-    paddingRight: 50
+    paddingRight: 50,
   },
   searchIconContainer: {
     position: "absolute",

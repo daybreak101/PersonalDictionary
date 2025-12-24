@@ -1,42 +1,19 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState, useRef } from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Pressable, StyleSheet, Text } from "react-native";
+import { useEffect, useState } from "react";
 import Animated, {
   useSharedValue,
-  withTiming,
   useAnimatedStyle,
-  Easing,
-  withSpring,
   interpolate,
-  withDecay,
 } from "react-native-reanimated";
 import LinearGradient from "react-native-linear-gradient";
 import data from "../data/randomWord.json";
 import { useTheme } from "../context/ThemeContext";
 import RNHapticFeedback from "react-native-haptic-feedback";
-import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
-import {
-  Gesture,
-  GestureDetector,
-  Directions,
-  Pan,
-} from "react-native-gesture-handler";
-import {
-  runOnRuntime,
-  runOnUI,
-  runOnUIAsync,
-  scheduleOnRN,
-  scheduleOnUI,
-  runOnJS,
-} from "react-native-worklets";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { runOnJS } from "react-native-worklets";
 
-export default function WordOfTheDay({
-  isFocused,
-  setWordSearched,
-  handleSubmit,
-}) {
-  const { themeObject, textColor, backgroundColor, hapticFeedback } =
-    useTheme();
+export default function WordOfTheDay({ isFocused, handleSubmit }) {
+  const { themeObject, textColor, hapticFeedback } = useTheme();
 
   const [word, setWord] = useState("");
   useEffect(() => {
@@ -89,7 +66,6 @@ export default function WordOfTheDay({
               flex: 1,
               display: isFocused ? "none" : "flex",
               shadowColor: themeObject.gradientColor2,
-              //borderColor: themeObject.focusColor,
             },
             styles.wordBox,
           ]}
@@ -122,7 +98,6 @@ const styles = StyleSheet.create({
   },
   wordBox: {
     flex: 1,
-    //borderWidth: 2,
     borderRadius: 20,
     elevation: 100,
   },

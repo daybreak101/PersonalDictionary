@@ -52,14 +52,18 @@ export default function MyWordsList() {
 
   const { refreshFlag, setRefreshFlag } = useRefresh();
 
-  const { themeObject, textColor, backgroundColor, hapticFeedback } =
-    useTheme();
+  const {
+    themeValue,
+    themeObject,
+    textColor,
+    backgroundColor,
+    hapticFeedback,
+  } = useTheme();
 
   const getAllItems = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem("words");
       return jsonValue != null ? JSON.parse(jsonValue) : [];
-      // setFullSavedWords(wordsArray);
     } catch (error) {
       console.log("Error loading saved words:", error);
       return [];
@@ -68,9 +72,9 @@ export default function MyWordsList() {
 
   const BATCH_SIZE = 20;
   const loadMore = async () => {
-    if (currentMax >= fullSavedWords.length) return;
+    if (currentMax >= savedWords.length) return;
 
-    const nextMax = Math.min(currentMax + BATCH_SIZE, fullSavedWords.length);
+    const nextMax = Math.min(currentMax + BATCH_SIZE, savedWords.length);
 
     setRenderedWords((prev) => [
       ...prev,
@@ -94,6 +98,8 @@ export default function MyWordsList() {
   useEffect(() => {
     refreshList();
     setFilters({});
+    setSortBy("Newest");
+    setInput("");
   }, [refreshFlag]);
 
   const deleteItem = async (key, refresh) => {
@@ -102,7 +108,6 @@ export default function MyWordsList() {
       const wordsArray = jsonValue != null ? JSON.parse(jsonValue) : [];
       const filteredArray = wordsArray.filter((item) => item.timestamp !== key);
       await AsyncStorage.setItem("words", JSON.stringify(filteredArray));
-      console.log("Deletion successful");
       if (refresh) setRefreshFlag((prev) => !prev);
       else {
         setRenderedWords((prev) =>
@@ -130,7 +135,6 @@ export default function MyWordsList() {
       );
 
       await AsyncStorage.setItem("words", JSON.stringify(filteredArray));
-      console.log("Edit successful");
       setRefreshFlag((prev) => !prev);
     } catch (error) {
       console.log("Error editing item:", error);
@@ -145,107 +149,149 @@ export default function MyWordsList() {
   };
 
   const applyFilters = async (f, searchText = input) => {
+    setCurrentMax(20);
     if (f == null && searchText === "") {
       setFilters({});
-      setSavedWords([...fullSavedWords]);
+      setSavedWords(
+        [...fullSavedWords].sort((a, b) => {
+          switch (sortBy) {
+            case "Newest":
+              return b.timestamp - a.timestamp;
+            case "Oldest":
+              return a.timestamp - b.timestamp;
+            case "Alphabetical":
+              return a.info.word.localeCompare(b.info.word, undefined, {
+                sensitivity: "base",
+              });
+            case "Reverse Alphabet":
+              return b.info.word.localeCompare(a.info.word, undefined, {
+                sensitivity: "base",
+              });
+            case "Longest":
+              return b.info.word.length - a.info.word.length;
+            case "Shortest":
+              return a.info.word.length - b.info.word.length;
+          }
+        })
+      );
     } else {
       const activeFilters = f ?? filters;
       setFilters(activeFilters);
       setSavedWords(
-        fullSavedWords.filter((word) => {
-          let searchMatch =
-            word.info.word.toLowerCase().includes(input.toLowerCase()) ||
-            input === ""
-              ? true
-              : false;
-          console.log(word + " === " + input + " ? " + searchMatch);
-          let quoteMatch = true;
-          let pronounceMatch = true;
-          let originMatch = true;
-          let relationsMatch = true;
-          let nounMatch = false;
-          let pronounMatch = false;
-          let verbMatch = false;
-          let adjectiveMatch = false;
-          let adverbMatch = false;
-          let prepositionMatch = false;
-          let conjunctionMatch = false;
-          let interjectionMatch = false;
-          let otherMatch = false;
-          let partOfSpeechMatch = false;
-          partOfSpeechMatch =
-            f.noun ||
-            f.pronoun ||
-            f.verb ||
-            f.adjective ||
-            f.adverb ||
-            f.preposition ||
-            f.conjunction ||
-            f.interjection ||
-            f.other;
-          if (f.quotes)
-            quoteMatch = word.info.citations.length > 0 ? true : false;
-          if (f.pronounce)
-            pronounceMatch = word.info.pronounce !== "" ? true : false;
-          if (f.origin) originMatch = word.info.origin != null ? true : false;
-          if (f.relations)
-            relationsMatch =
-              word.info.synonyms.length > 0 || word.info.antonyms.length > 0
+        fullSavedWords
+          .filter((word) => {
+            let searchMatch =
+              word.info.word.toLowerCase().includes(searchText.toLowerCase()) ||
+              input === ""
                 ? true
                 : false;
-          if (f.noun)
-            nounMatch = word.info.partOfSpeech === "noun" ? true : false;
-          if (f.pronoun)
-            pronounMatch = word.info.partOfSpeech === "pronoun" ? true : false;
-          if (f.verb)
-            verbMatch = word.info.partOfSpeech === "verb" ? true : false;
-          if (f.adjective)
-            adjectiveMatch =
-              word.info.partOfSpeech === "adjective" ? true : false;
-          if (f.adverb)
-            adverbMatch = word.info.partOfSpeech === "adverb" ? true : false;
-          if (f.preposition)
-            prepositionMatch =
-              word.info.partOfSpeech === "preposition" ? true : false;
-          if (f.conjunction)
-            conjunctionMatch =
-              word.info.partOfSpeech === "conjunction" ? true : false;
-          if (f.interjection)
-            interjectionMatch =
-              word.info.partOfSpeech === "interjection" ? true : false;
-          if (f.other) {
-            const pof = word.info.partOfSpeech;
-            otherMatch =
-              pof !== "noun" &&
-              pof !== "pronoun" &&
-              pof !== "verb" &&
-              pof !== "adjective" &&
-              pof !== "adverb" &&
-              pof !== "preposition" &&
-              pof !== "conjunction" &&
-              pof !== "interjection"
-                ? true
-                : false;
-          }
-          console.log("Done");
-          return (
-            searchMatch &&
-            quoteMatch &&
-            pronounceMatch &&
-            originMatch &&
-            relationsMatch &&
-            (!partOfSpeechMatch ||
-              nounMatch ||
-              pronounMatch ||
-              verbMatch ||
-              adjectiveMatch ||
-              adverbMatch ||
-              prepositionMatch ||
-              conjunctionMatch ||
-              interjectionMatch ||
-              otherMatch)
-          );
-        })
+            let quoteMatch = true;
+            let pronounceMatch = true;
+            let originMatch = true;
+            let relationsMatch = true;
+            let nounMatch = false;
+            let pronounMatch = false;
+            let verbMatch = false;
+            let adjectiveMatch = false;
+            let adverbMatch = false;
+            let prepositionMatch = false;
+            let conjunctionMatch = false;
+            let interjectionMatch = false;
+            let otherMatch = false;
+            let partOfSpeechMatch = false;
+            partOfSpeechMatch =
+              f.noun ||
+              f.pronoun ||
+              f.verb ||
+              f.adjective ||
+              f.adverb ||
+              f.preposition ||
+              f.conjunction ||
+              f.interjection ||
+              f.other;
+            if (f.quotes)
+              quoteMatch = word.info.citations.length > 0 ? true : false;
+            if (f.pronounce)
+              pronounceMatch = word.info.pronounce !== "" ? true : false;
+            if (f.origin) originMatch = word.info.origin != null ? true : false;
+            if (f.relations)
+              relationsMatch =
+                word.info.synonyms.length > 0 || word.info.antonyms.length > 0
+                  ? true
+                  : false;
+            if (f.noun)
+              nounMatch = word.info.partOfSpeech === "noun" ? true : false;
+            if (f.pronoun)
+              pronounMatch =
+                word.info.partOfSpeech === "pronoun" ? true : false;
+            if (f.verb)
+              verbMatch = word.info.partOfSpeech === "verb" ? true : false;
+            if (f.adjective)
+              adjectiveMatch =
+                word.info.partOfSpeech === "adjective" ? true : false;
+            if (f.adverb)
+              adverbMatch = word.info.partOfSpeech === "adverb" ? true : false;
+            if (f.preposition)
+              prepositionMatch =
+                word.info.partOfSpeech === "preposition" ? true : false;
+            if (f.conjunction)
+              conjunctionMatch =
+                word.info.partOfSpeech === "conjunction" ? true : false;
+            if (f.interjection)
+              interjectionMatch =
+                word.info.partOfSpeech === "interjection" ? true : false;
+            if (f.other) {
+              const pof = word.info.partOfSpeech;
+              otherMatch =
+                pof !== "noun" &&
+                pof !== "pronoun" &&
+                pof !== "verb" &&
+                pof !== "adjective" &&
+                pof !== "adverb" &&
+                pof !== "preposition" &&
+                pof !== "conjunction" &&
+                pof !== "interjection"
+                  ? true
+                  : false;
+            }
+            return (
+              searchMatch &&
+              quoteMatch &&
+              pronounceMatch &&
+              originMatch &&
+              relationsMatch &&
+              (!partOfSpeechMatch ||
+                nounMatch ||
+                pronounMatch ||
+                verbMatch ||
+                adjectiveMatch ||
+                adverbMatch ||
+                prepositionMatch ||
+                conjunctionMatch ||
+                interjectionMatch ||
+                otherMatch)
+            );
+          })
+          .sort((a, b) => {
+            switch (sortBy) {
+              case "Newest":
+                return b.timestamp - a.timestamp;
+              case "Oldest":
+                return a.timestamp - b.timestamp;
+              case "Alphabetical":
+                return a.info.word.localeCompare(b.info.word, undefined, {
+                  sensitivity: "base",
+                });
+              case "Reverse Alphabet":
+                return b.info.word.localeCompare(a.info.word, undefined, {
+                  sensitivity: "base",
+                });
+              case "Longest":
+                return b.info.word.length - a.info.word.length;
+              case "Shortest":
+                return a.info.word.length - b.info.word.length;
+            }
+          })
       );
     }
   };
@@ -267,6 +313,7 @@ export default function MyWordsList() {
         setModalVisible={setSortModalVisible}
         sortBy={sortBy}
         setSortBy={setSortBy}
+        func={applyFilters}
       />
       <MyWordsSearch
         filters={filters}
@@ -276,7 +323,15 @@ export default function MyWordsList() {
       />
       <View style={styles.options}>
         <Pressable
-          style={[styles.option, { backgroundColor: themeObject.focusColor }]}
+          style={[
+            styles.option,
+            {
+              backgroundColor:
+                themeValue === "Comet"
+                  ? themeObject.gradientColor2
+                  : themeObject.focusColor,
+            },
+          ]}
           onPress={() => setFilterModalVisible(true)}
         >
           <Text style={[styles.optionText]}>Filters</Text>
@@ -291,7 +346,15 @@ export default function MyWordsList() {
           </Text>
         )}
         <Pressable
-          style={[styles.option, { backgroundColor: themeObject.focusColor }]}
+          style={[
+            styles.option,
+            {
+              backgroundColor:
+                themeValue === "Comet"
+                  ? themeObject.gradientColor2
+                  : themeObject.focusColor,
+            },
+          ]}
           onPress={() => setSortModalVisible(true)}
         >
           <Text style={[styles.optionText]}>Sort</Text>
