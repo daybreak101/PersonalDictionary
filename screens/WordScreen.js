@@ -87,35 +87,39 @@ export default function WordScreen({ word }) {
           color={darkMode ? themeObject.focusColor : themeObject.unfocusColor}
         />
       ) : (
-        <FlatList
-          style={styles.wordList}
-          data={definitions}
-          renderItem={({ item }) => {
-            return (
-              <WordCard
-                word={word}
-                definition={item}
-                playAudio={(uri) => playAudio(uri)}
-              />
-            );
-          }}
-          ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
-          ListEmptyComponent={
-            <View
-              style={{
-                flexGrow: 1,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Text style={{ color: textColor }}>No items found</Text>
-            </View>
-          }
-          contentContainerStyle={{
-            paddingVertical: 40,
-            paddingHorizontal: 20,
-          }}
-        />
+        <>
+          <Text style={[styles.header, {color: textColor}]}>{word}</Text>
+          <FlatList
+            style={styles.wordList}
+            data={definitions}
+            renderItem={({ item }) => {
+              return (
+                <WordCard
+                  word={word}
+                  definition={item}
+                  playAudio={(uri) => playAudio(uri)}
+                />
+              );
+            }}
+            ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+            ListEmptyComponent={
+              <View
+                style={{
+                  flexGrow: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={{ color: textColor }}>No items found</Text>
+              </View>
+            }
+            contentContainerStyle={{
+              paddingTop: 10,
+              paddingBottom: 40,
+              paddingHorizontal: 20,
+            }}
+          />
+        </>
       )}
     </View>
   );
@@ -131,6 +135,11 @@ const styles = StyleSheet.create({
   },
   word: {
     padding: 10,
+  },
+  header: {
+    fontSize: 32,
+    paddingVertical: 10,
+    paddingHorizontal: 20
   },
   activity: {
     flex: 1,

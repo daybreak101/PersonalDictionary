@@ -6,8 +6,11 @@ import { useNotif } from "../context/NotifContext";
 import { useRefresh } from "../context/RefreshContext";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useAudioPlayer } from "expo-audio";
+import { useTheme } from "../context/ThemeContext";
 
 export default function WordCard({ definition, word }) {
+  const { themeObject, textColor, darkMode } = useTheme();
+
   const { setNotifVisible, setNotifDesc } = useNotif();
   const { refreshFlag, setRefreshFlag } = useRefresh();
 
@@ -42,48 +45,81 @@ export default function WordCard({ definition, word }) {
   });
 
   return (
-    <View style={styles.card}>
-      <Text>{definition.partOfSpeech}</Text>
-      <Text style={styles.definition}>{definition.definition}</Text>
+    <View style={[styles.card, { backgroundColor: themeObject.unfocusColor }]}>
+      <Text style={[styles.pos, { color: "white" }]}>
+        {definition.partOfSpeech}
+      </Text>
+      <Text style={[styles.definition, { color: "white" }]}>
+        {definition.definition}
+      </Text>
       {definition.synonyms?.length > 0 && (
-        <Text>Synonyms: {definition.synonyms.join(", ")}</Text>
+        <Text style={{ color: "white" }}>
+          Synonyms: {definition.synonyms.join(", ")}
+        </Text>
       )}
       {definition.antonyms?.length > 0 && (
-        <Text>Antonyms: {definition.antonyms.join(", ")}</Text>
+        <Text style={{ color: "white" }}>
+          Antonyms: {definition.antonyms.join(", ")}
+        </Text>
       )}
-      {definition.origin && <Text>Origin: {definition.origin}</Text>}
-      {definition.pronounce && (
+      {definition.origin && (
+        <Text style={{ color: "white" }}>Origin: {definition.origin}</Text>
+      )}
+
+      <View style={styles.bottom}>
         <Pressable
-          style={styles.refresh}
-          onPress={() => {
-            player.seekTo(0);
-            player.play();
-          }}
+          style={[styles.refresh, { backgroundColor: themeObject.focusColor }]}
+          onPress={() => saveItem(word, definition)}
         >
-          <MaterialCommunityIcons name="volume-high" size={24} color="black" />
+          <Text>Add to Dictionary</Text>
+          <FontAwesome6 name="add" size={24} color="black" />
         </Pressable>
-      )}
-      <Pressable
-        style={styles.refresh}
-        onPress={() => saveItem(word, definition)}
-      >
-        <FontAwesome6 name="add" size={24} color="black" />
-      </Pressable>
+        {definition.pronounce && (
+          <Pressable
+            style={styles.refresh}
+            onPress={() => {
+              player.seekTo(0);
+              player.play();
+            }}
+          >
+            <MaterialCommunityIcons
+              name="volume-high"
+              size={24}
+              color="white"
+            />
+          </Pressable>
+        )}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    borderWidth: 2,
+    padding: 10,
     borderRadius: 10,
-    borderColor: "#c8c8c8ff",
-    backgroundColor: "#e6fcffff",
     elevation: 15,
     shadowColor: "black",
+  },
+  pos: {
+    fontStyle: "italic",
   },
   definition: {
     fontSize: 20,
     padding: 10,
+    paddingBottom: 20,
+  },
+  bottom: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingTop: 20,
+  },
+  refresh: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    borderRadius: 25,
+    gap: 10,
   },
 });

@@ -24,11 +24,11 @@ const ThemeProvider = ({ children }) => {
       case "Default":
         setThemeObject({
           gradientColor1: "#ffffffba",
-          gradientColor2: "#edededa9",
-          unfocusColor: "#000000ff",
-          focusColor: "#9f9f9fff",
+          gradientColor2: "#dadadaa9",
+          unfocusColor: "#a3a3a3ff",
+          focusColor: "#ffffffff",
           fadeColor1: "#ffffffff",
-          fadeColor2: "#ffffff01",
+          fadeColor2: "#00000001",
         });
         break;
       case "Iridescent":

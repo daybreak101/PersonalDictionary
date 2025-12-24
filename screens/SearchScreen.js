@@ -145,7 +145,7 @@ export default function SearchScreen({ navigation }) {
               autoCorrect={false}
               autoCapitalize="none"
               placeholder="Search for a word"
-              placeholderTextColor={textColor}
+              placeholderTextColor="gray"
               value={input}
               onChangeText={setInput}
               onFocus={() => setIsFocused(true)}
@@ -202,7 +202,8 @@ const styles = StyleSheet.create({
   inputView: {
     position: "relative",
     width: "100%",
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -221,7 +222,7 @@ const styles = StyleSheet.create({
   searchIconContainer: {
     position: "absolute",
     right: 30,
-    top: 30,
+    top: 20,
   },
 
   wordList: {

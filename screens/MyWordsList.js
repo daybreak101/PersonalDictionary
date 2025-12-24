@@ -327,14 +327,21 @@ export default function MyWordsList() {
             styles.option,
             {
               backgroundColor:
-                themeValue === "Comet"
+                themeValue === "Comet" || themeValue === "Default"
                   ? themeObject.gradientColor2
                   : themeObject.focusColor,
             },
           ]}
           onPress={() => setFilterModalVisible(true)}
         >
-          <Text style={[styles.optionText]}>Filters</Text>
+          <Text
+            style={[
+              styles.optionText,
+              { color: themeValue === "Comet" ? "white" : "black" },
+            ]}
+          >
+            Filters
+          </Text>
         </Pressable>
         {searched !== "" && (
           <Text
@@ -350,14 +357,21 @@ export default function MyWordsList() {
             styles.option,
             {
               backgroundColor:
-                themeValue === "Comet"
+                themeValue === "Comet" || themeValue === "Default"
                   ? themeObject.gradientColor2
                   : themeObject.focusColor,
             },
           ]}
           onPress={() => setSortModalVisible(true)}
         >
-          <Text style={[styles.optionText]}>Sort</Text>
+          <Text
+            style={[
+              styles.optionText,
+              { color: themeValue === "Comet" ? "white" : "black" },
+            ]}
+          >
+            Sort
+          </Text>
         </Pressable>
       </View>
       <Animated.FlatList
