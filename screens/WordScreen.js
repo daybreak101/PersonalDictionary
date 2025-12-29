@@ -17,13 +17,19 @@ export default function WordScreen({ word }) {
 
   const { themeObject, textColor, darkMode } = useTheme();
 
+  //on component load or input submit, retrieve dictionary info
+  //from API and load to state
   useEffect(() => {
     const getDefinition = async () => {
+      //when retrieving info, render loading component
       setLoading(true);
+
+      //if a new word has been searched, empty the state then fetch
       if (lastWord.current !== word) {
         setDefinitions([]);
       }
       try {
+        //fetch from API
         const res2 = await axios.get(
           `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
         );
@@ -33,21 +39,28 @@ export default function WordScreen({ word }) {
         let word2 = "";
         let pronounce = "";
 
+        //set empty state when API didn't return anything useful
         if (apiDef.title === "No Definitions Found") {
           setDefinitions([]);
           return;
         }
 
         const result = [];
+        //api return multiple words for the same word
         for (let i of apiDef) {
           word2 = i.word;
           const origin = i.origin;
+          //api returns multiple phonetics for the word
+          //we will only get audio url of US pronunciation
           for (let phonetic of i.phonetics) {
             if (phonetic.audio.endsWith("-us.mp3")) {
               pronounce = phonetic.audio;
             }
           }
 
+          //api returns definition blocks for part of speech
+          //we will create a new index for each definition that is
+          //nested in meanings
           for (let meaning of i.meanings) {
             const partOfSpeech = meaning.partOfSpeech;
             for (let def of meaning.definitions) {
@@ -66,6 +79,7 @@ export default function WordScreen({ word }) {
             }
           }
         }
+        //update states
         setDefinitions(result);
         lastWord.current = word;
         setLoading(false);

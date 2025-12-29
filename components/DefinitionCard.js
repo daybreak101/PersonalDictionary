@@ -39,6 +39,8 @@ export default function DefinitionCard({
     };
   });
 
+  //components revealed on swipe right gesture.
+  //Swipe-to-reveal delete action
   const renderRightActions = () => {
     const animatedStyle = useAnimatedStyle(() => ({
       minWidth: withTiming(100, { duration: 200 }),

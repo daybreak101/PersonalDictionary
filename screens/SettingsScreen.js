@@ -27,6 +27,8 @@ export default function SettingsScreen() {
   const { setRefreshFlag } = useRefresh();
   const { notifVisible, setNotifVisible, setNotifDesc } = useNotif();
 
+  //delete all recent searches from local searches
+  //call refresh flag to update appropriate states
   const clearRecentSearches = async () => {
     try {
       await AsyncStorage.removeItem("recentSearches");
@@ -38,6 +40,8 @@ export default function SettingsScreen() {
     }
   };
 
+  //delete all saved words from local searches
+  //call refresh flag to update appropriate states
   const clearSavedWords = async () => {
     try {
       await AsyncStorage.removeItem("words");

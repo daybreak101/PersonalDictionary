@@ -31,6 +31,11 @@ export default function WordCard({ definition, word }) {
         setNotifDesc(key + " has been added to your dictionary");
         await setRefreshFlag((prev) => !prev);
       }
+      // else {
+      //   wordsArray.map((obj) => {
+      //     obj.word === key && obj.info.definition.includes(word.definition)
+      //   })
+      // }
     } catch (error) {
       console.log("Error saving item:", error);
     }

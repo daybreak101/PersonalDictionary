@@ -13,7 +13,9 @@ export default function CustomTab({ state, descriptors, navigation }) {
       locations={[0, 1]}
       style={[styles.tabBarContainer]}
     >
-      {state.routes.map((route, index) => {
+      
+      {//for each tab...
+      state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label =
           options.tabBarLabel !== undefined
@@ -34,6 +36,7 @@ export default function CustomTab({ state, descriptors, navigation }) {
             canPreventDefault: true,
           });
 
+          //navigate if user selected different tab
           if (!isFocused && !event.defaultPrevented) {
             navigation.navigate(route.name, route.params);
           }

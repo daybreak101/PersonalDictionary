@@ -9,6 +9,7 @@ export default function SortBy({
   setSortBy,
   func,
 }) {
+  //callback to applyFilters function in MyWordsList
   const returnSort = () => {
     func();
   };

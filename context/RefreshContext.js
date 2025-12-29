@@ -1,10 +1,12 @@
 import { createContext, useContext, useState, useMemo } from "react";
 
+//refresh context is responsible to reload a screen based on certain scenarios
+//This may be done several layers deep, and may be done across different navigation tabs/screens
 const RefreshContext = createContext(null);
 
 export const useRefresh = () => {
   const ctx = useContext(RefreshContext);
-  if (!ctx) throw new Error("useNotif must be used inside NotifProvider");
+  if (!ctx) throw new Error("useRefresh must be used inside RefreshProvider");
   return ctx;
 };
 

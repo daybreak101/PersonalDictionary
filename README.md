@@ -68,8 +68,10 @@ If you would like to use this app and build upon it, please fork the repository.
 
 ## Project Status & Roadmap
 This project is a work in progress. Planned features and fixes includes:
+- [ ] Update EditModal text to correctly show "Update this citation" instead of "Add new citation?"
 - [ ] Swipe to reveal state to only have one revealed at a time
 - [ ] Ability to save multiple definitions of the same word
+- [ ] Refresh notification opacity when notification been called again
 
 ## Future Aspirations
 These are features I've considered but are unlikely to be implemented in the near future:

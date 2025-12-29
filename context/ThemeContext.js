@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+//Responsible for theming colors, settings, and dark mode
 const ThemeContext = createContext(null);
 
 export const useTheme = () => {
@@ -18,6 +19,8 @@ const ThemeProvider = ({ children }) => {
 
   const [textColor, setTextColor] = useState("black");
   const [backgroundColor, setBackgroundColor] = useState("white");
+
+  //switch between predefined theme values
   const setTheme = async (value) => {
     setThemeValue(value);
     switch (value) {
@@ -84,6 +87,7 @@ const ThemeProvider = ({ children }) => {
     }
   };
 
+  //retrieve saved settings from local storage, then apply to states
   const getSavedSettings = async () => {
     const jsonValue = await AsyncStorage.getItem("settings");
 
@@ -104,19 +108,23 @@ const ThemeProvider = ({ children }) => {
     setTextColor(settings.darkMode ? "white" : "black");
   };
 
+  //on component load (basically app startup), get saved settings
   useEffect(() => {
     getSavedSettings();
   }, []);
 
+  //save settings whenever a setting has been updated
   useEffect(() => {
     saveSettings();
   }, [themeValue, darkMode, hapticFeedback, screenReader]);
 
+  //apply darkmode when toggled
   useEffect(() => {
     setBackgroundColor(darkMode ? "#262626ff" : "white");
     setTextColor(darkMode ? "white" : "black");
   }, [darkMode]);
 
+  //save settings to local storage
   const saveSettings = async () => {
     try {
       let settings = {
@@ -131,6 +139,7 @@ const ThemeProvider = ({ children }) => {
     }
   };
 
+  //value object that can be accessed by all of its children
   const value = {
     themeObject,
     setTheme,

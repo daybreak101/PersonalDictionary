@@ -14,6 +14,7 @@ export default function RecentSearches({
   const { themeObject, textColor, hapticFeedback, themeValue, darkMode } =
     useTheme();
 
+  //retrieve recent searches from local storage and copy it to state.
   const deleteRecentSearch = async (key) => {
     try {
       const jsonValue = await AsyncStorage.getItem("recentSearches");
@@ -28,6 +29,8 @@ export default function RecentSearches({
       console.log("Error deleting recent search:", error);
     }
   };
+
+  //swipe-to-reveal for each recent search a delete action
   const renderRightActions = (item) => (
     <View
       style={{

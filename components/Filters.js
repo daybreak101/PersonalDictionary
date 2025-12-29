@@ -22,6 +22,9 @@ export default function Filters({
   const [interjection, setInterjection] = useState(false);
   const [other, setOther] = useState(false);
 
+  //when component load (pressing filter button), initialize states
+  //based on already selected filters. If no filters were selected
+  //beforehand, initialize them to false.
   useEffect(() => {
     if (filters) {
       setQuotes(filters.quotes ?? false);
@@ -40,6 +43,7 @@ export default function Filters({
     }
   }, [filters, modalVisible]);
 
+  //submitting filters, send back data to MyWordsList
   const returnFilters = () => {
     func({
       quotes: quotes,

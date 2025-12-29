@@ -60,6 +60,7 @@ export default function MyWordsList() {
     hapticFeedback,
   } = useTheme();
 
+  //load all words from local storage
   const getAllItems = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem("words");
@@ -70,6 +71,7 @@ export default function MyWordsList() {
     }
   };
 
+  //update the rendered list with at most 20 more words that follows filter and sort rules
   const BATCH_SIZE = 20;
   const loadMore = async () => {
     if (currentMax >= savedWords.length) return;
@@ -84,6 +86,8 @@ export default function MyWordsList() {
     setCurrentMax(nextMax);
   };
 
+  //refreshList and useEffect are responsible to reset the entire
+  //screen state to its default render.
   const refreshList = async () => {
     const words = await getAllItems();
     setFullSavedWords(words);
@@ -102,6 +106,8 @@ export default function MyWordsList() {
     setInput("");
   }, [refreshFlag]);
 
+  //delete word from state & storage. Key is word's timestamp and refresh is a
+  // boolean that determines if screen needs a complete refresh or not.
   const deleteItem = async (key, refresh) => {
     try {
       const jsonValue = await AsyncStorage.getItem("words");
@@ -123,6 +129,9 @@ export default function MyWordsList() {
     }
   };
 
+  //editItem is done by finding a word using it's timestamp as key, and update it
+  // with an entire new updatedCitations that was created in WordFocus component.
+  // This would update in local storage, state is handled elsewhere.
   const editItem = async (key, updatedCitations) => {
     try {
       const jsonValue = await AsyncStorage.getItem("words");
@@ -141,6 +150,8 @@ export default function MyWordsList() {
     }
   };
 
+  //search using input passed in as "word" from MyWordsSearch component,
+  //  returning a list of words that follows filter and sort rules.
   const search = async (word) => {
     setInput(word);
     setSearched(word);
@@ -148,8 +159,12 @@ export default function MyWordsList() {
     setSubmit((prev) => !prev);
   };
 
+  //function that returns a list of words that follows the user-selected
+  // filter and sort rules.
   const applyFilters = async (f, searchText = input) => {
+    //reset list to show only first 20
     setCurrentMax(20);
+    //if user removes all filters go here
     if (f == null && searchText === "") {
       setFilters({});
       setSavedWords(
@@ -174,21 +189,33 @@ export default function MyWordsList() {
           }
         })
       );
-    } else {
+    }
+    //if user has a filter selected or searched for a word, go here
+    else {
       const activeFilters = f ?? filters;
       setFilters(activeFilters);
       setSavedWords(
         fullSavedWords
           .filter((word) => {
+            //start by filtering out words that don't match the input if it has one
             let searchMatch =
               word.info.word.toLowerCase().includes(searchText.toLowerCase()) ||
               input === ""
                 ? true
                 : false;
+
+            //initialize booleans. 
+            //First four are initialized as true first in case user has not selected them as a filter
+            //relations refer to synonyms/antonyms
             let quoteMatch = true;
             let pronounceMatch = true;
             let originMatch = true;
             let relationsMatch = true;
+            //Since parts of speech returns any word that matches any selected part of speech filter,
+            //we create these rules:
+            //if any part of speech is selected, we make partOfSpeechMatch true, otherwise false
+            //if partOfSpeechMatch is true, then one of the individual part of speeches must be true
+            //if partOfSpeechMatch is false, then we can ignore the individuals and just return true.
             let nounMatch = false;
             let pronounMatch = false;
             let verbMatch = false;
@@ -273,6 +300,7 @@ export default function MyWordsList() {
             );
           })
           .sort((a, b) => {
+            //then finally sort the list by preferred sorting option.
             switch (sortBy) {
               case "Newest":
                 return b.timestamp - a.timestamp;
@@ -296,6 +324,7 @@ export default function MyWordsList() {
     }
   };
 
+  //run this when filters have changed, or input has been submitted
   useEffect(() => {
     setRenderedWords(savedWords.slice(0, 20));
   }, [filters, submit]);

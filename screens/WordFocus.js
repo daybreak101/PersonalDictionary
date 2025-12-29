@@ -30,11 +30,14 @@ export default function WordFocus() {
   const [focused, setFocused] = useState({});
   const [citations, setCitations] = useState([]);
 
+  //callback to MyWordsList delete function
+  //navigate back to MyWordsList when this item has been deleted.
   const deleteThis = async () => {
     await deleteItem(item.timestamp, true);
     navigation.navigate("My Words List");
   };
 
+  //set citations as as state on component load
   useEffect(() => {
     setCitations([...item.info.citations]);
   }, []);
@@ -43,6 +46,9 @@ export default function WordFocus() {
     downloadFirst: true,
   });
 
+  //delete citation by timestamp key and update state
+  //send back updated citations to MyWordsList editItem function
+  //to reflect changes to local storage
   const deleteCitation = async (key) => {
     const updatedCitations = citations.filter(
       (i) => i.timestamp !== key.timestamp
@@ -51,6 +57,9 @@ export default function WordFocus() {
     await editItem(item.timestamp, updatedCitations);
   };
 
+   //update citation by timestamp key and update state
+  //send back updated citations to MyWordsList editItem function
+  //to reflect changes to local storage
   const updateCitation = async (key) => {
     const updatedCitations = citations.map((i) =>
       i.timestamp === key.timestamp ? key : i

@@ -16,10 +16,13 @@ export default function WordOfTheDay({ isFocused, handleSubmit }) {
   const { themeObject, textColor, hapticFeedback } = useTheme();
 
   const [word, setWord] = useState("");
+
+  //get random word on component load
   useEffect(() => {
     getWord();
   }, []);
 
+  //random word from data file
   const getWord = async () => {
     try {
       setWord(data[Math.floor(Math.random() * data.length)]);
@@ -39,6 +42,8 @@ export default function WordOfTheDay({ isFocused, handleSubmit }) {
     };
   });
 
+  //swipe gesture would spin the component and reveal a new random word,
+  //using the runOnJS function
   const swipeGesture = Gesture.Pan()
     .onStart((e) => {})
     .onUpdate((e) => {

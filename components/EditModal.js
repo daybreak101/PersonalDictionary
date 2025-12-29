@@ -15,12 +15,14 @@ export default function EditModal({
   item,
   currentCitations = [],
   func,
-  c,
+  c, //exisitng citation
 }) {
   const [newQuote, setNewQuote] = useState("");
   const [newTitle, setNewTitle] = useState("");
   const [newAuthor, setNewAuthor] = useState("");
 
+  //if user is editing a citation, update states to include
+  //existing data.
   useEffect(() => {
     if (c) {
       setNewQuote(c.quote);
@@ -29,11 +31,13 @@ export default function EditModal({
     }
   }, [c]);
 
+  //function is responsible for adding new AND editing existing citations
   const newCitation = () => {
     if (newQuote == "") {
       return;
     }
     let updatedCitations;
+    //if updating citation
     if (c) {
       updatedCitations = currentCitations.map((i) =>
         i.timestamp === c.timestamp
@@ -45,7 +49,9 @@ export default function EditModal({
             }
           : i
       );
-    } else {
+    } 
+    //if new citation
+    else {
       updatedCitations = [
         ...currentCitations,
         {
@@ -56,9 +62,11 @@ export default function EditModal({
         },
       ];
     }
+    //cleanup
     setNewQuote("");
     setNewAuthor("");
     setNewTitle("");
+    //send back updated data to WordFocus
     func(updatedCitations);
   };
 

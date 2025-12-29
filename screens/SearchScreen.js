@@ -38,6 +38,7 @@ export default function SearchScreen({ navigation }) {
   const { notifVisible } = useNotif();
   const [recentSearches, setRecentSearches] = useState([]);
 
+  //retrieve recent searches from local storage
   const getRecentSearches = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem("recentSearches");
@@ -49,10 +50,13 @@ export default function SearchScreen({ navigation }) {
     }
   };
 
+  //save a new recent search to local storage
   const saveRecentSearch = async (key) => {
     try {
       const jsonValue = await AsyncStorage.getItem("recentSearches");
       const array = jsonValue != null ? JSON.parse(jsonValue) : [];
+      //see if this search has already existed
+      //if it does exist, move it to the front of the list
       const removeExisting = array.filter((item) => item !== key);
 
       removeExisting.unshift(key);
@@ -60,16 +64,19 @@ export default function SearchScreen({ navigation }) {
         "recentSearches",
         JSON.stringify(removeExisting)
       );
+      //update state with changes
       setRecentSearches(removeExisting);
     } catch (error) {
       console.log("Error saving recent search:", error);
     }
   };
 
+  //if Clear Recent Searches applied from settings, update the state
   useEffect(() => {
     getRecentSearches();
   }, [refreshFlag]);
 
+  //customize back action to change default behavior if input is focused
   useEffect(() => {
     const backAction = () => {
       if (submitted || isFocused) {
@@ -93,6 +100,7 @@ export default function SearchScreen({ navigation }) {
     return null; // Prevent rendering until fonts are ready
   }
 
+  //on input (word) submit
   const handleSubmit = async (word) => {
     if (word === "") {
       setWordSearched(word);

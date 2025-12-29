@@ -11,6 +11,7 @@ export default function Notification({
   const { setNotifVisible, notifDesc } = useNotif();
   const { themeObject } = useTheme();
 
+  //fade notification
   useEffect(() => {
     const timer = setTimeout(() => {
       Animated.timing(fadeAnim, {

@@ -14,6 +14,7 @@ export default function MyWordsSearch({ input, setInput, func }) {
     search(word);
   };
 
+  //call back to search function in MyWordsList
   const search = async (word) => {
     func(word);
   };
