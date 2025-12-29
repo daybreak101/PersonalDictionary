@@ -16,6 +16,7 @@ A Dictionary app where users can discover new English words and add them to thei
 - A randomized Word Of The Day
 ### My Words Screen
 - Screen to review saved words in a list with swiping quick-delete.
+- Search bar to quickly look up a saved word
 - Filter button which includes settings:
      * Has Quotes
      * Has Pronunciation
@@ -31,12 +32,21 @@ A Dictionary app where users can discover new English words and add them to thei
           * Interjection
           * Other
 - Sort button which includes settings:
-     * by Newest
-     * by Oldest
+     * Newest
+     * Oldest
      * Alphabetical
      * Reverse Alphabetical
      * Longest
      * Shortest
+- An expanded view of the saved word that has the saved dictionary details, in addition it includes:
+     * Ability to add quotes from literature in addition to title and author.
+     * A quick-delete and edit button to each quote.
+### Settings Screen
+- Theme Selector
+- Dark Mode
+- Haptic Feedback
+- Clear all recent searches
+- Clear all saved words
 
 ## Getting Started
 
