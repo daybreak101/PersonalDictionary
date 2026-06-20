@@ -1,6 +1,6 @@
 import { StyleSheet, Text, Switch, Pressable } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
-import RNHapticFeedback from "react-native-haptic-feedback";
+import * as Haptics from "expo-haptics";
 
 export default function HapticFeedback() {
   const {
@@ -12,8 +12,9 @@ export default function HapticFeedback() {
   } = useTheme();
 
   const toggleSwitch = async () => {
-    if (!hapticFeedback) {
-      RNHapticFeedback.trigger("impactHeavy");
+    if (hapticFeedback) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      //RNHapticFeedback.trigger("impactHeavy");
     }
     setHapticFeedback((prev) => !prev);
   };

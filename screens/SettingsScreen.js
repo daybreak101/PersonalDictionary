@@ -6,10 +6,10 @@ import ThemeSelector from "../components/settings/ThemeSelector";
 import DarkModeToggle from "../components/settings/DarkModeToggle";
 import { useTheme } from "../context/ThemeContext";
 import HapticFeedback from "../components/settings/HapticFeedback";
-import RNHapticFeedback from "react-native-haptic-feedback";
 import { useRefresh } from "../context/RefreshContext";
 import { useNotif } from "../context/NotifContext";
 import Notification from "../components/Notification";
+import * as Haptics from "expo-haptics";
 
 export default function SettingsScreen() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -96,7 +96,8 @@ export default function SettingsScreen() {
             ]}
             onPress={() => {
               if (hapticFeedback) {
-                RNHapticFeedback.trigger("notificationWarning");
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                //RNHapticFeedback.trigger("impactHeavy");
               }
               setModalDesc("clear recent searches");
               setModalVisible(true);
@@ -129,7 +130,8 @@ export default function SettingsScreen() {
             ]}
             onPress={() => {
               if (hapticFeedback) {
-                RNHapticFeedback.trigger("notificationWarning");
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                //RNHapticFeedback.trigger("impactHeavy");
               }
               setModalDesc("clear saved words");
               setModalVisible(true);

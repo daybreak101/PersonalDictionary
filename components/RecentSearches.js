@@ -4,7 +4,7 @@ import { useTheme } from "../context/ThemeContext";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import Entypo from "@expo/vector-icons/Entypo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import RNHapticFeedback from "react-native-haptic-feedback";
+import * as Haptics from "expo-haptics";
 
 export default function RecentSearches({
   recentSearches,
@@ -22,7 +22,7 @@ export default function RecentSearches({
       const removeExisting = array.filter((item) => item !== key);
       await AsyncStorage.setItem(
         "recentSearches",
-        JSON.stringify(removeExisting)
+        JSON.stringify(removeExisting),
       );
       setRecentSearches((prev) => prev.filter((item) => key !== item));
     } catch (error) {
@@ -86,7 +86,10 @@ export default function RecentSearches({
                       ]}
                       onPress={() => {
                         if (hapticFeedback) {
-                          RNHapticFeedback.trigger("impactHeavy");
+                          Haptics.impactAsync(
+                            Haptics.ImpactFeedbackStyle.Light,
+                          );
+                          //RNHapticFeedback.trigger("impactHeavy");
                         }
                         Keyboard.dismiss();
                         handleSubmit(item);

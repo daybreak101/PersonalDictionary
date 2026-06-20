@@ -16,9 +16,10 @@ import MyWordsSearch from "../components/MyWordsSearch";
 import { useTheme } from "../context/ThemeContext";
 import { useRefresh } from "../context/RefreshContext";
 import Animated, { LinearTransition } from "react-native-reanimated";
-import RNHapticFeedback from "react-native-haptic-feedback";
 import Filters from "../components/Filters";
 import SortBy from "../components/SortBy";
+import * as Haptics from "expo-haptics";
+
 
 export default function MyWordsList() {
   //collection of words that are currently displayed
@@ -434,9 +435,10 @@ export default function MyWordsList() {
           currentMax < savedWords.length && (
             <Pressable
               onPress={() => {
-                if (hapticFeedback) {
-                  RNHapticFeedback.trigger("impactHeavy");
-                }
+              if (hapticFeedback) {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                //RNHapticFeedback.trigger("impactHeavy");
+              }
                 loadMore();
               }}
               style={{

@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Haptics from "expo-haptics";
+
 
 //Responsible for theming colors, settings, and dark mode
 const ThemeContext = createContext(null);

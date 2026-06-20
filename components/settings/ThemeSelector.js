@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
-import RNHapticFeedback from "react-native-haptic-feedback";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import * as Haptics from "expo-haptics";
 
 export default function ThemeSelector() {
   const {
@@ -27,7 +27,8 @@ export default function ThemeSelector() {
   };
   const toggleExpand = () => {
     if (hapticFeedback) {
-      RNHapticFeedback.trigger("impactHeavy", options);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      //RNHapticFeedback.trigger("impactHeavy");
     }
     expanded.value = withTiming(expanded.value ? 0 : 1, { duration: 200 });
   };
@@ -51,7 +52,8 @@ export default function ThemeSelector() {
 
   const toggleTheme = async (theme) => {
     if (hapticFeedback) {
-      RNHapticFeedback.trigger("effectClick");
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      //RNHapticFeedback.trigger("impactHeavy");
     }
     await setTheme(theme);
     await setThemeValue(theme);

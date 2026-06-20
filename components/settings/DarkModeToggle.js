@@ -1,19 +1,15 @@
 import { StyleSheet, Text, Pressable, Switch } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
-import RNHapticFeedback from "react-native-haptic-feedback";
+import * as Haptics from "expo-haptics";
 
 export default function DarkModeToggle() {
-  const {
-    textColor,
-    darkMode,
-    setDarkMode,
-    hapticFeedback,
-    themeObject,
-  } = useTheme();
+  const { textColor, darkMode, setDarkMode, hapticFeedback, themeObject } =
+    useTheme();
 
   const toggleSwitch = async () => {
     if (hapticFeedback) {
-      RNHapticFeedback.trigger("impactHeavy");
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      //RNHapticFeedback.trigger("impactHeavy");
     }
     setDarkMode((prev) => !prev);
   };

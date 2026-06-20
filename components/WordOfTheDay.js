@@ -5,12 +5,13 @@ import Animated, {
   useAnimatedStyle,
   interpolate,
 } from "react-native-reanimated";
-import LinearGradient from "react-native-linear-gradient";
+import { LinearGradient } from "expo-linear-gradient";
 import data from "../data/randomWord.json";
 import { useTheme } from "../context/ThemeContext";
-import RNHapticFeedback from "react-native-haptic-feedback";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { runOnJS } from "react-native-worklets";
+import * as Haptics from "expo-haptics";
+
 
 export default function WordOfTheDay({ isFocused, handleSubmit }) {
   const { themeObject, textColor, hapticFeedback } = useTheme();
@@ -79,7 +80,8 @@ export default function WordOfTheDay({ isFocused, handleSubmit }) {
             style={styles.pressable}
             onPress={() => {
               if (hapticFeedback) {
-                RNHapticFeedback.trigger("impactHeavy");
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                //RNHapticFeedback.trigger("impactHeavy");
               }
               handleSubmit(word);
             }}

@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import RNHapticFeedback from "react-native-haptic-feedback";
 import { useTheme } from "../context/ThemeContext";
-import LinearGradient from "react-native-linear-gradient";
+import { LinearGradient } from "expo-linear-gradient";
+import * as Haptics from "expo-haptics";
 
 export default function CustomTab({ state, descriptors, navigation }) {
   const { themeObject, backgroundColor, hapticFeedback } = useTheme();
@@ -28,7 +28,8 @@ export default function CustomTab({ state, descriptors, navigation }) {
 
         const onPress = () => {
           if (hapticFeedback) {
-            RNHapticFeedback.trigger("impactHeavy");
+            //RNHapticFeedback.trigger("impactHeavy");
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           }
           const event = navigation.emit({
             type: "tabPress",

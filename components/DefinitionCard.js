@@ -8,12 +8,13 @@ import Animated, {
   SlideOutRight,
   withTiming,
 } from "react-native-reanimated";
-import LinearGradient from "react-native-linear-gradient";
-import RNHapticFeedback from "react-native-haptic-feedback";
+import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "../context/ThemeContext";
 import { useNavigation } from "@react-navigation/native";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import Entypo from "@expo/vector-icons/Entypo";
+import * as Haptics from "expo-haptics";
+
 
 export default function DefinitionCard({
   item,
@@ -95,7 +96,8 @@ export default function DefinitionCard({
             style={styles.wordContainer}
             onPress={() => {
               if (hapticFeedback) {
-                RNHapticFeedback.trigger("impactHeavy");
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                //RNHapticFeedback.trigger("impactHeavy");
               }
               navigation.navigate("Word Focus", {
                 item: item,
